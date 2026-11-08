@@ -1,0 +1,4 @@
+.map { width: 100%; height: 59vh; border-radius: 24rpx; background: #eadfca; }
+.filters { display: flex; gap: 14rpx; margin: 14rpx 0; }
+.filters button { flex: 1; }
+.stops button { text-align: left; }
