@@ -1,0 +1,2 @@
+.hero { display: block; width: 100%; height: 320rpx; border-radius: 22rpx; margin-bottom: 24rpx; background: #eadfca; }
+.tag { display: inline-block; padding: 6rpx 18rpx; background: #f2e4cb; border-radius: 24rpx; color: #702c1e; }

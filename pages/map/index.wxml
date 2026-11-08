@@ -1,0 +1,37 @@
+<view class="screen">
+  <view class="kicker">洛阳 · 城中导览</view>
+  <view class="title">选个时间，我带你走</view>
+  <map wx:if="{{mapVisible}}" class="map" latitude="{{latitude}}" longitude="{{longitude}}" scale="13"
+    markers="{{markers}}" bindmarkertap="showSpot" bindupdated="mapReady" binderror="mapError" />
+  <button wx:if="{{mapFailed}}" class="secondary" bindtap="retryMap">地图没加载出来，点这里重试</button>
+  <button wx:if="{{mapSlow}}" class="secondary" bindtap="retryMap">加载有点慢，点这里刷新</button>
+  <view wx:if="{{activeSpot}}" class="card">
+    <view class="heading">{{activeSpot.name}}</view>
+    <view class="muted">{{activeSpot.intro}}</view>
+    <button class="primary" data-spot="{{activeSpot.id}}" bindtap="openSpot">打开景点故事</button>
+    <button class="secondary" bindtap="closeSpot">收起景点</button>
+  </view>
+  <button class="primary" bindtap="toggleRoutes">{{showRoutes ? '收起路线' : '按时间选路线'}}</button>
+  <view wx:if="{{savedRoute || lastSpot}}" class="card">
+    <view wx:if="{{savedRoute}}" class="muted">上次选择 · {{savedRoute.name}}</view>
+    <button wx:if="{{lastSpot}}" class="secondary" data-spot="{{lastSpot.id}}" bindtap="openSpot">继续收听 · {{lastSpot.name}}</button>
+  </view>
+  <button wx:if="{{storageNotice}}" class="secondary" bindtap="retrySave">{{storageNotice}} · 重试</button>
+  <view wx:if="{{showRoutes}}" id="routes">
+    <view class="filters">
+      <button class="{{budget === 'halfDay' ? 'primary' : 'secondary'}}" data-budget="halfDay" bindtap="changeBudget">半天</button>
+      <button class="{{budget === 'oneDay' ? 'primary' : 'secondary'}}" data-budget="oneDay" bindtap="changeBudget">一天</button>
+    </view>
+    <view class="muted">路线与时长为演示数据，故事待审核。</view>
+    <view wx:if="{{!routeCards.length}}" class="card">这个时间暂时没有合适路线，换个时间试试</view>
+    <view wx:for="{{routeCards}}" wx:key="id" wx:for-item="route" class="card">
+      <view class="heading">{{route.name}}</view>
+      <view class="muted">{{route.totalDuration}} · {{route.storyCount}} 个故事条目</view>
+      <button class="secondary" data-id="{{route.id}}" bindtap="selectRoute">{{selectedRouteId === route.id ? '已选择 · 路线详情' : '选择路线并查看详情'}}</button>
+      <view wx:if="{{selectedRouteId === route.id}}" class="stops">
+        <button wx:for="{{route.stops}}" wx:key="id" class="secondary" data-route="{{route.id}}" data-spot="{{item.id}}" bindtap="openSpot">{{index + 1}}. {{item.name}}</button>
+      </view>
+      <button wx:elif="{{route.stops.length}}" class="secondary" data-route="{{route.id}}" data-spot="{{route.stops[0].id}}" bindtap="openSpot">从 {{route.stops[0].name}} 开始</button>
+    </view>
+  </view>
+</view>

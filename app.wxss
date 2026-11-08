@@ -1,0 +1,12 @@
+page { background: #fff7e9; color: #35241e; font-size: 28rpx; }
+.screen { padding: 28rpx; }
+.kicker { color: #8a422e; font-size: 23rpx; letter-spacing: 4rpx; }
+.title { font-size: 49rpx; font-weight: bold; margin: 10rpx 0 18rpx; }
+.card { background: #fffdf8; border: 2rpx solid #ecdcc3; border-radius: 22rpx; padding: 22rpx; margin-top: 18rpx; }
+.heading { font-weight: bold; font-size: 34rpx; }
+.muted { color: #6f554a; font-size: 26rpx; line-height: 1.65; }
+.primary, .secondary { margin: 18rpx 0 0; border-radius: 16rpx; text-align: center; font-size: 28rpx; }
+.primary { background: #823724; color: white; }
+.secondary { background: #f2e4cb; color: #512b21; }
+button::after { border: 0; }
+.notice { color: #823724; margin-top: 15rpx; line-height: 1.5; }

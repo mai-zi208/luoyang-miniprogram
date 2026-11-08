@@ -1,0 +1,23 @@
+<view class="screen">
+  <block wx:if="{{story}}">
+    <image class="hero" src="{{imageUrl}}" mode="aspectFill" binderror="usePlaceholder" />
+    <view class="kicker">{{spot.name}}</view>
+    <view class="title">{{story.title}}</view>
+    <text wx:if="{{story.type === 'legend'}}" class="tag">传说</text>
+    <view class="card">
+      <view class="heading">{{story.demo ? '演示音频' : '景点讲解'}}</view>
+      <view class="muted">进度 {{progress}} / {{duration}} 秒</view>
+      <button wx:if="{{audioError}}" class="secondary" bindtap="togglePlay">{{audioError}}</button>
+      <button wx:else class="primary" loading="{{loading}}" disabled="{{loading}}" bindtap="togglePlay">{{playing ? '暂停' : (progress ? '继续播放' : '播放')}}</button>
+      <button wx:if="{{storageNotice}}" class="secondary" bindtap="retrySave">{{storageNotice}} · 重试</button>
+    </view>
+    <view class="card">
+      <view class="heading">文字故事</view>
+      <view class="muted">{{story.text}}</view>
+    </view>
+  </block>
+  <view wx:else class="card">
+    <view>这个景点的故事暂时无法打开。</view>
+    <navigator class="secondary" open-type="reLaunch" url="/pages/map/index">返回地图</navigator>
+  </view>
+</view>
