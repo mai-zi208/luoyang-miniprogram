@@ -36,4 +36,6 @@
     </view>
     <view wx:elif="{{notice}}" class="notice">{{notice}}</view>
   </view>
+
+  <button class="primary go-story" hover-class="pressed" disabled="{{!active}}" bindtap="goStory">查看景点故事</button>
 </view>

@@ -66,5 +66,9 @@ Page({
   },
   openSettings() {
     wx.openSetting({ success: result => { if (result.authSetting['scope.userLocation']) this.locate() } })
+  },
+  goStory() {
+    if (!this.data.active) return
+    wx.navigateTo({ url: '/pages/story/index?id=' + this.data.active.id })
   }
 })

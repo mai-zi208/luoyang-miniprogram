@@ -1,1 +1,6 @@
-{"navigationBarTitleText":"神都 · 听卷","usingComponents":{"narrator":"/components/narrator/index"}}
+{
+  "navigationBarTitleText": "神都 · 听卷",
+  "usingComponents": {
+    "narrator": "/components/narrator/index"
+  }
+}
