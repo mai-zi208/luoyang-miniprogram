@@ -1,7 +1,7 @@
 {
   "description": "武则天带你游洛阳",
   "compileType": "miniprogram",
-  "appid": "touristappid",
+  "appid": "wx8071846a10294d15",
   "projectname": "luoyang-miniprogram",
   "setting": {
     "es6": true,
@@ -23,7 +23,9 @@
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    }
+    },
+    "useCompilerPlugins": false,
+    "condition": false
   },
   "packOptions": {
     "ignore": [
