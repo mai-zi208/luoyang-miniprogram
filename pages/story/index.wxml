@@ -1,23 +1,26 @@
-<view class="screen">
-  <block wx:if="{{story}}">
-    <image class="hero" src="{{imageUrl}}" mode="aspectFill" binderror="usePlaceholder" />
-    <view class="kicker">{{spot.name}}</view>
-    <view class="title">{{story.title}}</view>
-    <text wx:if="{{story.type === 'legend'}}" class="tag">传说</text>
+<view class="screen story">
+  <block wx:if="{{stop}}">
+    <view class="kicker">神都 · 听卷</view>
+    <view class="title lg">{{stop.name}}</view>
+    <image class="hero" mode="aspectFill" src="/assets/palace-{{stop.id > 5 ? 1 : stop.id}}.webp" />
+    <narrator stop-id="{{stop.id}}" />
     <view class="card">
-      <view class="heading">{{story.demo ? '演示音频' : '景点讲解'}}</view>
-      <view class="muted">进度 {{progress}} / {{duration}} 秒</view>
-      <button wx:if="{{audioError}}" class="secondary" bindtap="togglePlay">{{audioError}}</button>
-      <button wx:else class="primary" loading="{{loading}}" disabled="{{loading}}" bindtap="togglePlay">{{playing ? '暂停' : (progress ? '继续播放' : '播放')}}</button>
-      <button wx:if="{{storageNotice}}" class="secondary" bindtap="retrySave">{{storageNotice}} · 重试</button>
+      <view class="row"><view class="heading">此站讲解</view><view class="chip">底稿</view></view>
+      <view class="passage">{{stop.story}}</view>
+      <view class="src" hover-class="pressed" data-url="{{stop.source}}" bindtap="copySource"><text class="lb">来源</text><text class="link">{{sourceHost}}</text></view>
     </view>
-    <view class="card">
-      <view class="heading">文字故事</view>
-      <view class="muted">{{story.text}}</view>
+    <view wx:if="{{stop.legend}}" class="card featured">
+      <view class="row"><view class="heading">传说</view><view class="chip"><view class="dot peony"></view>非正史</view></view>
+      <view class="passage">{{stop.legend}}</view>
+      <view class="src" hover-class="pressed" data-url="{{stop.legendSource}}" bindtap="copySource"><text class="lb">来源</text><text class="link">{{legendHost}}</text></view>
+    </view>
+    <view wx:else class="card">
+      <view class="row"><view class="heading">传说</view><view class="chip">无</view></view>
+      <view class="muted tip">此处暂无可靠传说记录，不作演绎。</view>
     </view>
   </block>
   <view wx:else class="card">
-    <view>这个景点的故事暂时无法打开。</view>
-    <navigator class="secondary" open-type="reLaunch" url="/pages/map/index">返回地图</navigator>
+    <view class="muted">这个景点的故事暂时无法打开。</view>
+    <navigator class="secondary" hover-class="pressed" open-type="reLaunch" url="/pages/choose/index">返回游历选择</navigator>
   </view>
 </view>

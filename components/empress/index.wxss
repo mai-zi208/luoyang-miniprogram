@@ -1,0 +1,4 @@
+.figure,.surface,.fallback { width:100%;height:100%;display:block; }
+.figure { position:relative; }
+.surface,.fallback { position:absolute;top:0;left:0; }
+.hidden { opacity:0; }

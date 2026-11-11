@@ -1,0 +1,23 @@
+<view class="narrator">
+  <image class="ink" src="/assets/palace-2.webp" mode="aspectFit" />
+  <view class="row-line">
+    <view class="portrait-wrap">
+      <empress class="portrait" mouth="{{mouth}}" closeup="{{true}}" />
+      <button class="voice-button {{playing ? 'on' : ''}}" hover-class="pressed" loading="{{loading}}" disabled="{{loading}}" bindtap="toggle">{{playing ? '暂停' : (position ? '继续' : '聆听')}}</button>
+    </view>
+    <view class="voice">
+      <view class="row">
+        <view class="kicker">{{playing ? '播放中 · 口型随音轨' : '女皇 · 语音讲解'}}</view>
+        <view class="mouth" wx:if="{{playing}}">
+          <text wx:for="{{[0,1,2,3]}}" wx:key="index" style="height:{{mouth ? (4 + mouth * (item + 1)) / 2 : 2}}rpx"></text>
+        </view>
+      </view>
+      <view class="meter" wx:if="{{duration}}">
+        <view class="track"><view class="fill" style="width:{{position * 100 / duration}}%"></view></view>
+        <view class="faint">{{position}} / {{duration}} 秒</view>
+      </view>
+      <view wx:if="{{notice}}" class="notice">{{notice}}</view>
+    </view>
+  </view>
+  <text wx:if="{{script}}" class="script" selectable>{{script}}</text>
+</view>

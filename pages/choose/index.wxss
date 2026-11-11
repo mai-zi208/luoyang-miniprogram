@@ -1,0 +1,102 @@
+page { background:var(--ink-0); }
+/* 入场按 欢迎 → 进度轨 → 选择卡 → 启程 依次上浮。 */
+/* 上浮一律用 backwards 而不是 both：收尾的 both 会把 opacity/transform 长期钉在终值上，
+   压掉 hover-class 的按压缩放，也让 .departing 的退场变暗整条失效。 */
+.choose {
+  position:relative;min-height:100vh;box-sizing:border-box;overflow:hidden;
+  padding-bottom:calc(180rpx + env(safe-area-inset-bottom));
+}
+/* palace 线描素材自带深底，lighten 只留鎏金线条，避免盖住标题 */
+/* 必须写死 width：微信 <image> 有默认 320px 宽，只给 left/right 撑不满，线描会挤在标题下方 */
+.backdrop {
+  position:absolute;top:-28rpx;left:-10%;width:120%;height:380rpx;
+  opacity:.13;mix-blend-mode:lighten;pointer-events:none;
+}
+.welcome {
+  position:relative;z-index:1;display:flex;align-items:center;gap:var(--s-3);min-height:252rpx;padding-top:96rpx;
+  animation:rise var(--t-3) var(--ease) backwards;
+}
+/* 左上自定义返回键：原生回家键由微信给（redirectTo 后必然出现），这个把「回欢迎页」放到页面里。 */
+.home-back {
+  position:absolute;top:var(--s-2);left:var(--s-4);z-index:6;
+  width:64rpx;height:64rpx;display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:40rpx;line-height:1;color:var(--gold-300);
+  background:var(--ink-1);border:1px solid var(--line-1);border-radius:50%;
+  transition:color var(--t-1),border-color var(--t-1),transform var(--t-1);
+}
+.portrait { width:184rpx;height:292rpx;flex-shrink:0; }
+.welcome-copy { padding:0 14rpx;min-width:0; }
+.welcome-copy .title { margin:12rpx 0 var(--s-2); }
+
+.card { position:relative;z-index:1; }
+/* 卡片本身不加入场延迟：它每次翻折都要重放 rise，任何延迟都会变成操作后的等待。 */
+.stage { animation:rise var(--t-3) var(--ease) backwards; }
+.stage.turning { animation:sink var(--t-2) ease both; }
+
+/* 三段进度：壹 时长 → 贰 景点 → 叁 启程，与对话页的站点轨同一套几何时序 */
+.step-rail {
+  position:relative;z-index:1;display:flex;align-items:center;gap:12rpx;padding-bottom:var(--s-2);
+  animation:rise var(--t-3) 70ms var(--ease) backwards;
+}
+.st { display:flex;align-items:center;gap:10rpx;flex:0 0 auto;font-size:var(--f-kicker);letter-spacing:2rpx;color:var(--text-low); }
+.st .d {
+  display:block;width:34rpx;height:34rpx;line-height:32rpx;text-align:center;
+  border-radius:50%;font-family:var(--serif);font-size:20rpx;color:var(--text-low);
+  border:1px solid var(--line-1);
+  transition:background var(--t-2),color var(--t-2),border-color var(--t-2);
+}
+.st.done .d { border-color:var(--gold-500);color:var(--gold-300); }
+.st.now { color:var(--gold-100); }
+.st.now .d { background:var(--gold-500);border-color:var(--gold-500);color:var(--on-gold); }
+.st .lb { white-space:nowrap; }
+.bar { flex:1;height:1px;min-width:12rpx;background:var(--line-1); }
+
+.durations { display:flex;flex-direction:column;gap:var(--s-2);margin-top:18rpx; }
+.row.head { margin-top:var(--s-2); }
+.choice {
+  margin:0;padding:20rpx var(--s-3);min-width:0;box-sizing:border-box;
+  font-size:var(--f-caption);line-height:1.5;text-align:left;color:var(--text-hi);
+  background:var(--ink-1);border:1px solid var(--line-1);border-radius:var(--r-sm);
+  transition:background var(--t-2) var(--ease),border-color var(--t-2) var(--ease),transform var(--t-1) var(--ease);
+}
+.choice[disabled] { background:var(--ink-1);color:var(--text-mid);border-color:var(--line-1);opacity:1; }
+.dur { display:flex;align-items:center;justify-content:space-between;gap:var(--s-2);padding:26rpx var(--s-3); }
+.dur-title { font-family:var(--serif);font-size:var(--f-section); }
+.picked { background:var(--ink-3);border-color:var(--gold-500);color:var(--gold-100); }
+.picked[disabled] { background:var(--ink-3);color:var(--gold-100);border-color:var(--gold-500); }
+
+.places { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-2);margin-top:18rpx; }
+/* 逐个浮现的节拍由 WXML 的 animation-delay 给出：勾选卡是翻页后整批出现，需要错峰。 */
+.place {
+  display:flex;align-items:center;gap:var(--s-2);min-height:92rpx;
+  animation:rise var(--t-3) var(--ease) backwards;
+}
+.place-name { flex:1;min-width:0;overflow:hidden; }
+.badge {
+  flex:0 0 44rpx;width:44rpx;height:44rpx;line-height:42rpx;text-align:center;
+  border-radius:50%;border:1px solid var(--line-2);color:var(--gold-300);font-size:var(--f-kicker);
+  transition:background var(--t-2),color var(--t-2),border-color var(--t-2);
+}
+.picked .badge { background:var(--gold-500);border-color:var(--gold-500);color:var(--on-gold);animation:pop var(--t-2) var(--ease-back) }
+.back { flex:0 0 auto;padding:0 8rpx; }
+
+.route { display:flex;align-items:center;flex-wrap:wrap;gap:8rpx;min-height:52rpx;margin-top:var(--s-2); }
+.route.empty { min-height:44rpx; }
+.node {
+  display:flex;align-items:center;gap:8rpx;padding:6rpx 16rpx;
+  font-size:20rpx;color:var(--gold-100);background:var(--ink-1);
+  border:1px solid var(--line-2);border-radius:999rpx;
+  animation:rise var(--t-2) var(--ease) backwards;
+}
+.node .num { font-family:var(--serif);color:var(--gold-500); }
+.counter { font-size:var(--f-caption);color:var(--text-mid); }
+/* 计数由 index.js 交给 anime 补间；固定宽度让它跳数字时不推挤后面的「/ 5」。 */
+.counter text { display:inline-block;min-width:30rpx;text-align:right;font-family:var(--serif);font-size:var(--f-section);color:var(--gold-100); }
+
+.notice { position:relative;z-index:1; }
+.start {
+  position:absolute;left:var(--s-4);right:var(--s-4);bottom:calc(var(--s-4) + 40rpx);z-index:6;margin:0;
+  animation:rise var(--t-3) 210ms var(--ease) backwards;
+}
+/* 启程时整屏往下沉一档，扫光（app.wxss 的 .sweep）从斜处压过来，两者叠成一次位移。 */
+.departing .welcome,.departing .step-rail,.departing .stage,.departing .start { transition:opacity var(--t-2) var(--ease);opacity:.45 }

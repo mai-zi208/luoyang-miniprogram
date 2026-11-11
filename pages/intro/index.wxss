@@ -1,0 +1,54 @@
+page { background:var(--ink-0); }
+.opening {
+  position:relative;height:100vh;overflow:hidden;
+  background:radial-gradient(ellipse at 70% 64%,var(--ink-2),var(--ink-0) 68%);
+  transition:opacity var(--t-2) var(--ease);
+}
+.leaving { opacity:0; }
+
+.inscription { position:absolute;top:11%;left:9%;z-index:4;animation:fadeUp var(--t-3) 200ms var(--ease) both; }
+.inscription .display { margin-top:var(--s-2);letter-spacing:18rpx; }
+.mist {
+  position:absolute;width:105%;height:22%;border-radius:50%;
+  filter:blur(68rpx);background:var(--mist);
+  animation:drift 9s ease-in-out infinite alternate;
+}
+.mist-a { left:-22%;top:24%; }
+.mist-b { right:-20%;bottom:16%;animation-delay:-2.4s; }
+
+/* 画布内的五重建筑由 index.js 自己按帧扫描显影，这里不再叠加动画。 */
+/* 试过 mix-blend-mode:lighten 去底，无效：素材底色 (15,33,32) 比页面 (14,29,31) 更亮，
+   lighten 取较亮者，只会保留它。要消边得改 draw() 的 alpha，不在样式层。 */
+.silhouettes { position:absolute;top:25%;left:5%;width:52%;height:58%; }
+.empress { position:absolute;bottom:12%;right:-3%;width:56%;height:64%;animation:fadeUp var(--t-4) 360ms var(--ease) both; }
+
+.petal {
+  position:absolute;top:-4%;width:16rpx;height:24rpx;
+  border-radius:80% 15% 65% 22%;background:var(--peony-500);opacity:.4;
+  animation:fall 9s linear infinite;
+}
+/* 入树时机由 index.js 的 ready 把控（显影与辉光收束之后），这里只负责入场与可点提示。 */
+.invitation {
+  position:absolute;bottom:8.5%;left:0;right:0;z-index:4;text-align:center;
+  font-family:var(--serif);font-size:34rpx;letter-spacing:6rpx;color:var(--gold-100);
+  animation:fadeUp var(--t-3) var(--ease) backwards;
+}
+.invitation::after {
+  content:"";display:block;width:72rpx;height:2rpx;margin:18rpx auto 0;
+  background:var(--gold-300);opacity:.55;
+  animation:beckon 2.6s 700ms var(--ease) infinite;
+}
+.beckoned { opacity:.72; }
+.skip {
+  position:absolute;bottom:3%;right:var(--s-4);z-index:5;margin:0;
+  height:auto;line-height:1.5;padding:10rpx 24rpx;
+  font-size:var(--f-kicker);color:var(--text-low);
+  background:transparent;border:1px solid var(--line-1);border-radius:999rpx;
+  transition:color var(--t-1),border-color var(--t-1);
+}
+.skip[disabled],.skip[disabled][type="default"] { background:transparent;color:var(--text-low); }
+
+@keyframes fadeUp { from {opacity:0;transform:translateY(16rpx)} to {opacity:1;transform:translateY(0)} }
+@keyframes beckon { 0%,100% {transform:scaleX(.45);opacity:.3} 50% {transform:scaleX(1);opacity:.85} }
+@keyframes drift { from {transform:translateX(-8%) scale(.92)} to {transform:translateX(16%) scale(1.12)} }
+@keyframes fall { to {transform:translate(75rpx,108vh) rotate(160deg)} }

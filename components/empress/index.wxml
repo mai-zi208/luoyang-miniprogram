@@ -1,0 +1,4 @@
+<view class="figure">
+  <image wx:if="{{!ready}}" src="/assets/empress.webp" class="fallback" mode="aspectFit" />
+  <canvas type="2d" id="figure" class="surface {{ready ? '' : 'hidden'}}" aria-label="武则天动态立绘"></canvas>
+</view>

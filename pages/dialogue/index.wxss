@@ -1,0 +1,58 @@
+.dialogue { height:100vh;display:flex;flex-direction:column;box-sizing:border-box }
+/* 入场按时序自上而下：站名 → 站点轨 → 讲解卡 → 输入区；一律 backwards，见 choose 页同款说明。 */
+.top { display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-4) 0;animation:rise var(--t-3) var(--ease) backwards }
+.stop { flex:1;min-width:0 }
+/* 换站时整块标题重放一次上浮，读作女皇换了一段话。 */
+.stop.flipping { animation:rise var(--t-2) var(--ease-back) backwards }
+.spot { margin-top:8rpx;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; }
+.chip { flex:0 0 auto; }
+.dot.live { animation:pulse 1.6s var(--ease) infinite; }
+
+/* 站点轨是换站的唯一入口：圆点放大、带站名，整条可横滑，点谁到哪站。 */
+.step-rail { display:flex;align-items:flex-start;gap:12rpx;padding:var(--s-3) var(--s-4) var(--s-2);overflow-x:auto;animation:rise var(--t-3) 70ms var(--ease) backwards }
+.st { flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:8rpx; }
+.st .d {
+  display:block;width:48rpx;height:48rpx;line-height:46rpx;text-align:center;
+  border-radius:50%;font-family:var(--serif);font-size:24rpx;color:var(--text-low);
+  border:1px solid var(--line-2);
+  transition:background var(--t-2),color var(--t-2),border-color var(--t-2),transform var(--t-1);
+}
+.st .lb { font-size:20rpx;letter-spacing:1rpx;color:var(--text-low);white-space:nowrap; }
+.st.done .d { border-color:var(--gold-500);color:var(--gold-300); }
+.st.now .d { background:var(--gold-500);border-color:var(--gold-500);color:var(--on-gold);transform:scale(1.08); }
+.st.now .lb { color:var(--gold-100); }
+.bar { flex:1;height:1px;min-width:16rpx;background:var(--line-1);margin-top:24rpx; }
+
+narrator { display:block;margin:0 var(--s-4);animation:rise var(--t-3) 140ms var(--ease) backwards }
+narrator.flipping { animation:rise var(--t-2) var(--ease-back) backwards }
+
+.messages { flex:1;height:0;min-height:0;padding:var(--s-3) var(--s-4); }
+/* 气泡带一点超调落位：先冲过头 3rpx 再收住，比等速上浮更像有人把话放下来。 */
+.message { margin:0 0 var(--s-3);max-width:80%;animation:settle var(--t-3) var(--ease-back) backwards }
+.message.user { margin-left:auto;text-align:right; }
+.sender { font-size:20rpx;letter-spacing:4rpx;color:var(--gold-500);margin-bottom:8rpx; }
+.user .sender { color:var(--peony-500);letter-spacing:0; }
+.bubble {
+  display:inline-block;text-align:left;white-space:pre-wrap;word-break:break-word;line-height:1.7;
+  padding:20rpx var(--s-3);font-size:var(--f-body);color:var(--text-hi);
+  background:var(--ink-2);border:1px solid var(--line-1);border-radius:6rpx 20rpx 20rpx 20rpx;
+  box-shadow:var(--hl);
+}
+.user .bubble { background:var(--peony-surface);border-color:var(--line-peony);color:var(--peony-text); }
+
+.thinking { display:flex;align-items:center;gap:14rpx;margin-bottom:var(--s-3); }
+.thinking text { display:block;width:10rpx;height:10rpx;border-radius:50%;background:var(--gold-500);animation:bob 1.1s var(--ease) infinite; }
+.thinking text:nth-child(2) { animation-delay:.15s; }
+.thinking text:nth-child(3) { animation-delay:.3s; }
+.thinking .muted { font-size:var(--f-caption); }
+.retry { margin-bottom:var(--s-3); }
+
+.controls { flex:0 0 auto;background:var(--ink-1);border-top:1px solid var(--line-2);padding:20rpx var(--s-4) calc(24rpx + env(safe-area-inset-bottom));animation:rise var(--t-3) 210ms var(--ease) backwards }
+.actions,.composer { display:flex;align-items:center;gap:14rpx; }
+.composer { margin-top:20rpx; }
+.field { flex:1;min-width:0;height:88rpx;display:flex;align-items:center;padding:0 24rpx;background:var(--ink-0);border:1px solid var(--line-2);border-radius:var(--r-sm); }
+.field input { flex:1;min-width:0;height:88rpx;line-height:88rpx;padding:0;background:transparent;border:0;font-size:var(--f-body);color:var(--text-hi); }
+.send { flex:0 0 auto;margin:0;padding:0 var(--s-4);height:88rpx;line-height:86rpx; }
+
+@keyframes bob { 50% {transform:translateY(-8rpx);opacity:.5} }
+@keyframes pulse { 50% {opacity:.35;transform:scale(.8)} }

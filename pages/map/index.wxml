@@ -1,37 +1,39 @@
-<view class="screen">
-  <view class="kicker">洛阳 · 城中导览</view>
-  <view class="title">选个时间，我带你走</view>
-  <map wx:if="{{mapVisible}}" class="map" latitude="{{latitude}}" longitude="{{longitude}}" scale="13"
-    markers="{{markers}}" bindmarkertap="showSpot" bindupdated="mapReady" binderror="mapError" />
-  <button wx:if="{{mapFailed}}" class="secondary" bindtap="retryMap">地图没加载出来，点这里重试</button>
-  <button wx:if="{{mapSlow}}" class="secondary" bindtap="retryMap">加载有点慢，点这里刷新</button>
-  <view wx:if="{{activeSpot}}" class="card">
-    <view class="heading">{{activeSpot.name}}</view>
-    <view class="muted">{{activeSpot.intro}}</view>
-    <button class="primary" data-spot="{{activeSpot.id}}" bindtap="openSpot">打开景点故事</button>
-    <button class="secondary" bindtap="closeSpot">收起景点</button>
-  </view>
-  <button class="primary" bindtap="toggleRoutes">{{showRoutes ? '收起路线' : '按时间选路线'}}</button>
-  <view wx:if="{{savedRoute || lastSpot}}" class="card">
-    <view wx:if="{{savedRoute}}" class="muted">上次选择 · {{savedRoute.name}}</view>
-    <button wx:if="{{lastSpot}}" class="secondary" data-spot="{{lastSpot.id}}" bindtap="openSpot">继续收听 · {{lastSpot.name}}</button>
-  </view>
-  <button wx:if="{{storageNotice}}" class="secondary" bindtap="retrySave">{{storageNotice}} · 重试</button>
-  <view wx:if="{{showRoutes}}" id="routes">
-    <view class="filters">
-      <button class="{{budget === 'halfDay' ? 'primary' : 'secondary'}}" data-budget="halfDay" bindtap="changeBudget">半天</button>
-      <button class="{{budget === 'oneDay' ? 'primary' : 'secondary'}}" data-budget="oneDay" bindtap="changeBudget">一天</button>
-    </view>
-    <view class="muted">路线与时长为演示数据，故事待审核。</view>
-    <view wx:if="{{!routeCards.length}}" class="card">这个时间暂时没有合适路线，换个时间试试</view>
-    <view wx:for="{{routeCards}}" wx:key="id" wx:for-item="route" class="card">
-      <view class="heading">{{route.name}}</view>
-      <view class="muted">{{route.totalDuration}} · {{route.storyCount}} 个故事条目</view>
-      <button class="secondary" data-id="{{route.id}}" bindtap="selectRoute">{{selectedRouteId === route.id ? '已选择 · 路线详情' : '选择路线并查看详情'}}</button>
-      <view wx:if="{{selectedRouteId === route.id}}" class="stops">
-        <button wx:for="{{route.stops}}" wx:key="id" class="secondary" data-route="{{route.id}}" data-spot="{{item.id}}" bindtap="openSpot">{{index + 1}}. {{item.name}}</button>
+<view class="screen map-page">
+  <image class="map-ink" src="/assets/palace-4.webp" mode="aspectFit" />
+  <view class="kicker">神都 · 点位</view>
+  <view class="title lg">游历地图</view>
+  <map wx:if="{{visible}}" id="tour-map" class="map" latitude="{{latitude}}" longitude="{{longitude}}" scale="12"
+    markers="{{markers}}" include-points="{{points}}" bindmarkertap="selectMarker" bindupdated="ready" binderror="mapError" />
+  <button wx:if="{{mapNotice}}" class="secondary retry" hover-class="pressed" bindtap="retryMap">{{mapNotice}}</button>
+  <view class="muted map-note">景点坐标为参考点位，出行前请核对实际入口。</view>
+
+  <view class="brief {{flipping ? 'flipping' : ''}}">
+    <view class="row head">
+      <view class="who">
+        <view class="kicker" wx:if="{{active}}">第 {{activeNo}} 站</view>
+        <view class="heading">{{active ? active.name : '点标记或站名看古今'}}</view>
       </view>
-      <button wx:elif="{{route.stops.length}}" class="secondary" data-route="{{route.id}}" data-spot="{{route.stops[0].id}}" bindtap="openSpot">从 {{route.stops[0].name}} 开始</button>
+      <navigator wx:if="{{active}}" class="secondary small" hover-class="pressed" url="/pages/story/index?id={{active.id}}">打开听卷</navigator>
     </view>
+    <view class="chips">
+      <view wx:for="{{route}}" wx:for-item="s" wx:for-index="i" wx:key="id" class="chip-stop {{active && active.id === s.id ? 'on' : ''}}" style="animation-delay:{{i * 45}}ms" hover-class="pressed" data-id="{{s.id}}" bindtap="selectStop">{{i + 1}} {{s.short || s.name}}</view>
+    </view>
+    <block wx:if="{{active}}">
+      <view class="sec">
+        <view class="sec-t">时代变迁</view>
+        <text class="sec-b">{{active.era}}</text>
+      </view>
+      <view class="sec">
+        <view class="sec-t">今天 · 周边</view>
+        <view wx:for="{{active.nearby}}" wx:for-item="n" wx:key="kind" class="near"><text class="tag">{{n.kind}}</text><text class="nb">{{n.text}}</text></view>
+      </view>
+    </block>
+    <view wx:else class="muted hint">点上任一站，朕给你讲它的古与今。</view>
+    <button class="primary block locate" hover-class="pressed" loading="{{locating}}" disabled="{{locating || !visible}}" bindtap="locate">我的位置</button>
+    <view wx:if="{{canOpenSettings}}" class="errrow">
+      <view class="muted">{{notice}}</view>
+      <button class="text-btn" hover-class="pressed" bindtap="openSettings">打开定位设置</button>
+    </view>
+    <view wx:elif="{{notice}}" class="notice">{{notice}}</view>
   </view>
 </view>

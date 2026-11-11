@@ -1,0 +1,405 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><title>落地检查</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#061114;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#F0E6D4;padding:24px 28px 80px}
+h1{font:600 16px serif;color:#F4E6CA;margin-bottom:16px}
+.strip{display:flex;gap:20px;align-items:flex-start;overflow-x:auto}
+.cell{width:390px;flex:0 0 390px}
+.cell>h2{font:500 12px/1.6 sans-serif;color:#8A9B95;letter-spacing:2px;margin-bottom:8px}
+.phone{width:390px;height:844px;border:1px solid rgba(198,164,107,.16);border-radius:34px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.navbar{height:44px;flex:0 0 44px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;background:var(--ink-0,#0A1A1D);border-bottom:1px solid rgba(198,164,107,.16)}
+
+.phone {
+  --ink-0:#0A1A1D; --ink-1:#12262B; --ink-2:#1A343A; --ink-3:#214147;
+  --gold-100:#F4E6CA; --gold-300:#E0C48F; --gold-500:#C6A46B;
+  --line-1:rgba(198,164,107,.16); --line-2:rgba(198,164,107,.30);
+  --text-hi:#F0E6D4; --text-mid:#B7C3BB; --text-low:#8A9B95;
+  --peony-500:#B4708A; --peony-surface:#33252E; --peony-text:#F2E3E5; --alert:#EBA9AF;
+  --on-gold:#0F2226;
+  --line-peony:rgba(180,112,138,.28); --line-alert:rgba(235,169,175,.32);
+  --mist:rgba(198,164,107,.07);
+  --stream:linear-gradient(90deg,transparent,rgba(224,196,143,.13) 30%,rgba(244,230,202,.42),transparent);
+  --shadow-lift:0 -3.12px 10.40px rgba(0,0,0,.4);
+  --s-1:4.16px; --s-2:8.32px; --s-3:12.48px; --s-4:16.64px; --s-5:24.96px; --s-6:33.28px; --s-7:49.92px;
+  --r-sm:6.24px; --r-md:10.40px; --r-lg:14.56px;
+  --f-d1:29.12px; --f-d2:22.88px; --f-title:18.72px; --f-section:15.60px; --f-body:14.56px; --f-caption:12.48px; --f-kicker:11.44px;
+  --ease:cubic-bezier(.22,.7,.32,1); --ease-back:cubic-bezier(.34,1.36,.5,1); --t-0:40ms; --t-1:160ms; --t-2:240ms; --t-3:420ms; --t-4:1200ms; --t-5:690ms;
+  --hl:inset 0 1px 0 rgba(244,230,202,.07);
+  --serif:"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC",serif;
+
+  background:var(--ink-0);
+  color:var(--text-hi);
+  font-size:var(--f-body);
+}
+
+
+.screen { padding:var(--s-4) var(--s-4) calc(var(--s-5) + 0px); }
+.kicker { font-size:var(--f-kicker);letter-spacing:4.16px;line-height:1.4;color:var(--gold-500); }
+.display { font-family:var(--serif);font-size:var(--f-d1);font-weight:600;line-height:1.2;color:var(--gold-100); }
+.title { font-family:var(--serif);font-size:var(--f-title);font-weight:600;line-height:1.25;color:var(--gold-100); }
+.title.lg { font-size:var(--f-d2); }
+.heading { font-size:var(--f-section);font-weight:600;color:var(--text-hi); }
+.muted { font-size:var(--f-caption);line-height:1.7;color:var(--text-mid); }
+.faint { font-size:var(--f-kicker);line-height:1.6;color:var(--text-low); }
+.row { display:flex;align-items:center;justify-content:space-between;gap:var(--s-2); }
+.rule { height:1px;background:var(--line-1);margin:var(--s-4) 0; }
+
+
+.card {
+  background:var(--ink-2);
+  border:1px solid var(--line-1);
+  border-radius:var(--r-md);
+  padding:var(--s-4);
+  margin-top:var(--s-3);
+  box-shadow:var(--hl);
+}
+.card.raised { background:var(--ink-3); }
+.card.featured { border-color:var(--line-2);background:linear-gradient(158deg,var(--ink-3),var(--ink-2) 64%); }
+
+
+.primary,.secondary {
+  margin:var(--s-3) 0 0;
+  padding:0 var(--s-4);
+  height:45.76px;
+  line-height:45.76px;
+  border-radius:var(--r-sm);
+  text-align:center;
+  font-size:var(--f-body);
+  border:1px solid transparent;
+  box-sizing:border-box;
+  transition:transform var(--t-1) var(--ease),filter var(--t-1) var(--ease),background var(--t-2);
+}
+.primary { background:linear-gradient(112deg,var(--gold-100),var(--gold-500));color:var(--on-gold);font-weight:600; }
+.secondary { background:var(--ink-3);color:var(--gold-100);border-color:var(--line-2); }
+.text-btn { background:none;border:0;color:var(--gold-300);font-size:var(--f-caption);line-height:1.5;padding:2.08px 0;margin:0; }
+.small { margin:0;padding:0 12.48px;height:37.44px;line-height:37.44px;font-size:var(--f-caption);white-space:nowrap; }
+.block { width:100%; }
+.pressed { transform:scale(.98);filter:brightness(1.07); }
+button[disabled],button[disabled][type="default"] {
+  background:var(--ink-2);
+  color:var(--text-low);
+  border-color:var(--line-1);
+  opacity:1;
+  font-weight:400;
+}
+.text-btn[disabled] { background:none;border:0;color:var(--text-low); }
+
+
+
+
+
+@keyframes rise { from {opacity:0;transform:translateY(14.56px) scale(.985)} to {opacity:1;transform:translateY(0) scale(1)} }
+@keyframes sink { to {opacity:0;transform:translateY(-10.40px)} }
+@keyframes pop { 0% {transform:scale(.82)} 62% {transform:scale(1.08)} 100% {transform:scale(1)} }
+@keyframes settle { 0% {opacity:0;transform:translateY(9.36px) scale(1.016)} 68% {opacity:1;transform:translateY(-1.56px) scale(.997)} 100% {transform:translateY(0) scale(1)} }
+
+@keyframes wipe { 0% {opacity:0;transform:translateX(-140%) skewX(-20deg)} 18% {opacity:1} 82% {opacity:1} 100% {opacity:0;transform:translateX(360%) skewX(-20deg)} }
+.sweep {
+  position:absolute;top:-18%;bottom:-18%;left:0;width:38%;z-index:20;pointer-events:none;
+  background:var(--stream);filter:blur(11.44px);
+  animation:wipe var(--t-5) var(--ease) both;
+}
+
+
+.notice { font-size:var(--f-caption);line-height:1.5;color:var(--alert);margin-top:var(--s-2); }
+.chip {
+  display:inline-flex;align-items:center;gap:5.20px;
+  font-size:10.40px;letter-spacing:1.04px;color:var(--text-mid);
+  border:1px solid var(--line-1);border-radius:519.48px;padding:3.12px 9.36px;
+}
+.chip.alert { color:var(--alert);border-color:var(--line-alert); }
+.dot { width:5.20px;height:5.20px;border-radius:50%;background:var(--gold-300);flex:0 0 5.20px; }
+
+.f-intro .phone{ background:var(--ink-0); }
+.f-intro .opening{
+  position:relative;height:844.00px;overflow:hidden;
+  background:radial-gradient(ellipse at 70% 64%,var(--ink-2),var(--ink-0) 68%);
+  transition:opacity var(--t-2) var(--ease);
+}
+.f-intro .leaving{ opacity:0; }
+.f-intro .inscription{ position:absolute;top:11%;left:9%;z-index:4;animation:fadeUp var(--t-3) 200ms var(--ease) both; }
+.f-intro .inscription .display{ margin-top:var(--s-2);letter-spacing:9.36px; }
+.f-intro .mist{
+  position:absolute;width:105%;height:22%;border-radius:50%;
+  filter:blur(35.36px);background:var(--mist);
+  animation:drift 9s ease-in-out infinite alternate;
+}
+.f-intro .mist-a{ left:-22%;top:24%; }
+.f-intro .mist-b{ right:-20%;bottom:16%;animation-delay:-2.4s; }
+.f-intro .silhouettes{ position:absolute;top:25%;left:5%;width:52%;height:58%; }
+.f-intro .empress{ position:absolute;bottom:12%;right:-3%;width:56%;height:64%;animation:fadeUp var(--t-4) 360ms var(--ease) both; }
+.f-intro .petal{
+  position:absolute;top:-4%;width:8.32px;height:12.48px;
+  border-radius:80% 15% 65% 22%;background:var(--peony-500);opacity:.4;
+  animation:fall 9s linear infinite;
+}
+.f-intro .invitation{
+  position:absolute;bottom:8.5%;left:0;right:0;z-index:4;text-align:center;
+  font-family:var(--serif);font-size:17.68px;letter-spacing:3.12px;color:var(--gold-100);
+  animation:fadeUp var(--t-3) var(--ease) backwards;
+}
+.f-intro .invitation::after{
+  content:"";display:block;width:37.44px;height:1.04px;margin:9.36px auto 0;
+  background:var(--gold-300);opacity:.55;
+  animation:beckon 2.6s 700ms var(--ease) infinite;
+}
+.f-intro .beckoned{ opacity:.72; }
+.f-intro .skip{
+  position:absolute;bottom:3%;right:var(--s-4);z-index:5;margin:0;
+  height:auto;line-height:1.5;padding:5.20px 12.48px;
+  font-size:var(--f-kicker);color:var(--text-low);
+  background:transparent;border:1px solid var(--line-1);border-radius:519.48px;
+  transition:color var(--t-1),border-color var(--t-1);
+}
+.f-intro .skip[disabled],.f-intro .skip[disabled][type="default"]{ background:transparent;color:var(--text-low); }
+
+
+@keyframes fadeUp { from {opacity:0;transform:translateY(8.32px)} to {opacity:1;transform:translateY(0)} }
+
+@keyframes beckon { 0%,100% {transform:scaleX(.45);opacity:.3} 50% {transform:scaleX(1);opacity:.85} }
+
+@keyframes drift { from {transform:translateX(-8%) scale(.92)} to {transform:translateX(16%) scale(1.12)} }
+
+@keyframes fall { to {transform:translate(39.00px,911.52px) rotate(160deg)} }
+.f-choose .phone{ background:var(--ink-0); }
+.f-choose .choose{
+  position:relative;min-height:844.00px;box-sizing:border-box;overflow:hidden;
+  padding-bottom:calc(93.60px + 0px);
+}
+.f-choose .backdrop{
+  position:absolute;top:-14.56px;left:-10%;width:120%;height:197.60px;
+  opacity:.13;mix-blend-mode:lighten;pointer-events:none;
+}
+.f-choose .welcome{
+  position:relative;z-index:1;display:flex;align-items:center;gap:var(--s-3);min-height:131.04px;padding-top:49.92px;
+  animation:rise var(--t-3) var(--ease) backwards;
+}
+.f-choose .home-back{
+  position:absolute;top:var(--s-2);left:var(--s-4);z-index:6;
+  width:33.28px;height:33.28px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:20.80px;line-height:1;color:var(--gold-300);
+  background:var(--ink-1);border:1px solid var(--line-1);border-radius:50%;
+  transition:color var(--t-1),border-color var(--t-1),transform var(--t-1);
+}
+.f-choose .portrait{ width:95.68px;height:151.84px;flex-shrink:0; }
+.f-choose .welcome-copy{ padding:0 7.28px;min-width:0; }
+.f-choose .welcome-copy .title{ margin:6.24px 0 var(--s-2); }
+.f-choose .card{ position:relative;z-index:1; }
+.f-choose .stage{ animation:rise var(--t-3) var(--ease) backwards; }
+.f-choose .stage.turning{ animation:sink var(--t-2) ease both; }
+.f-choose .step-rail{
+  position:relative;z-index:1;display:flex;align-items:center;gap:6.24px;padding-bottom:var(--s-2);
+  animation:rise var(--t-3) 70ms var(--ease) backwards;
+}
+.f-choose .st{ display:flex;align-items:center;gap:5.20px;flex:0 0 auto;font-size:var(--f-kicker);letter-spacing:1.04px;color:var(--text-low); }
+.f-choose .st .d{
+  display:block;width:17.68px;height:17.68px;line-height:16.64px;text-align:center;
+  border-radius:50%;font-family:var(--serif);font-size:10.40px;color:var(--text-low);
+  border:1px solid var(--line-1);
+  transition:background var(--t-2),color var(--t-2),border-color var(--t-2);
+}
+.f-choose .st.done .d{ border-color:var(--gold-500);color:var(--gold-300); }
+.f-choose .st.now{ color:var(--gold-100); }
+.f-choose .st.now .d{ background:var(--gold-500);border-color:var(--gold-500);color:var(--on-gold); }
+.f-choose .st .lb{ white-space:nowrap; }
+.f-choose .bar{ flex:1;height:1px;min-width:6.24px;background:var(--line-1); }
+.f-choose .durations{ display:flex;flex-direction:column;gap:var(--s-2);margin-top:9.36px; }
+.f-choose .row.head{ margin-top:var(--s-2); }
+.f-choose .choice{
+  margin:0;padding:10.40px var(--s-3);min-width:0;box-sizing:border-box;
+  font-size:var(--f-caption);line-height:1.5;text-align:left;color:var(--text-hi);
+  background:var(--ink-1);border:1px solid var(--line-1);border-radius:var(--r-sm);
+  transition:background var(--t-2) var(--ease),border-color var(--t-2) var(--ease),transform var(--t-1) var(--ease);
+}
+.f-choose .choice[disabled]{ background:var(--ink-1);color:var(--text-mid);border-color:var(--line-1);opacity:1; }
+.f-choose .dur{ display:flex;align-items:center;justify-content:space-between;gap:var(--s-2);padding:13.52px var(--s-3); }
+.f-choose .dur-title{ font-family:var(--serif);font-size:var(--f-section); }
+.f-choose .picked{ background:var(--ink-3);border-color:var(--gold-500);color:var(--gold-100); }
+.f-choose .picked[disabled]{ background:var(--ink-3);color:var(--gold-100);border-color:var(--gold-500); }
+.f-choose .places{ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-2);margin-top:9.36px; }
+.f-choose .place{
+  display:flex;align-items:center;gap:var(--s-2);min-height:47.84px;
+  animation:rise var(--t-3) var(--ease) backwards;
+}
+.f-choose .place-name{ flex:1;min-width:0;overflow:hidden; }
+.f-choose .badge{
+  flex:0 0 22.88px;width:22.88px;height:22.88px;line-height:21.84px;text-align:center;
+  border-radius:50%;border:1px solid var(--line-2);color:var(--gold-300);font-size:var(--f-kicker);
+  transition:background var(--t-2),color var(--t-2),border-color var(--t-2);
+}
+.f-choose .picked .badge{ background:var(--gold-500);border-color:var(--gold-500);color:var(--on-gold);animation:pop var(--t-2) var(--ease-back) }
+.f-choose .back{ flex:0 0 auto;padding:0 4.16px; }
+.f-choose .route{ display:flex;align-items:center;flex-wrap:wrap;gap:4.16px;min-height:27.04px;margin-top:var(--s-2); }
+.f-choose .route.empty{ min-height:22.88px; }
+.f-choose .node{
+  display:flex;align-items:center;gap:4.16px;padding:3.12px 8.32px;
+  font-size:10.40px;color:var(--gold-100);background:var(--ink-1);
+  border:1px solid var(--line-2);border-radius:519.48px;
+  animation:rise var(--t-2) var(--ease) backwards;
+}
+.f-choose .node .num{ font-family:var(--serif);color:var(--gold-500); }
+.f-choose .counter{ font-size:var(--f-caption);color:var(--text-mid); }
+.f-choose .counter text{ display:inline-block;min-width:15.60px;text-align:right;font-family:var(--serif);font-size:var(--f-section);color:var(--gold-100); }
+.f-choose .notice{ position:relative;z-index:1; }
+.f-choose .start{
+  position:absolute;left:var(--s-4);right:var(--s-4);bottom:calc(var(--s-4) + 20.80px);z-index:6;margin:0;
+  animation:rise var(--t-3) 210ms var(--ease) backwards;
+}
+.f-choose .departing .welcome,.f-choose .departing .step-rail,.f-choose .departing .stage,.f-choose .departing .start{ transition:opacity var(--t-2) var(--ease);opacity:.45 }
+.f-dialogue .dialogue{ height:844.00px;display:flex;flex-direction:column;box-sizing:border-box }
+.f-dialogue .top{ display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-4) 0;animation:rise var(--t-3) var(--ease) backwards }
+.f-dialogue .stop{ flex:1;min-width:0 }
+.f-dialogue .stop.flipping{ animation:rise var(--t-2) var(--ease-back) backwards }
+.f-dialogue .spot{ margin-top:4.16px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; }
+.f-dialogue .chip{ flex:0 0 auto; }
+.f-dialogue .dot.live{ animation:pulse 1.6s var(--ease) infinite; }
+.f-dialogue .step-rail{ display:flex;align-items:flex-start;gap:6.24px;padding:var(--s-3) var(--s-4) var(--s-2);overflow-x:auto;animation:rise var(--t-3) 70ms var(--ease) backwards }
+.f-dialogue .st{ flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4.16px; }
+.f-dialogue .st .d{
+  display:block;width:24.96px;height:24.96px;line-height:23.92px;text-align:center;
+  border-radius:50%;font-family:var(--serif);font-size:12.48px;color:var(--text-low);
+  border:1px solid var(--line-2);
+  transition:background var(--t-2),color var(--t-2),border-color var(--t-2),transform var(--t-1);
+}
+.f-dialogue .st .lb{ font-size:10.40px;letter-spacing:0.52px;color:var(--text-low);white-space:nowrap; }
+.f-dialogue .st.done .d{ border-color:var(--gold-500);color:var(--gold-300); }
+.f-dialogue .st.now .d{ background:var(--gold-500);border-color:var(--gold-500);color:var(--on-gold);transform:scale(1.08); }
+.f-dialogue .st.now .lb{ color:var(--gold-100); }
+.f-dialogue .bar{ flex:1;height:1px;min-width:8.32px;background:var(--line-1);margin-top:12.48px; }
+.f-dialogue narrator{ display:block;margin:0 var(--s-4);animation:rise var(--t-3) 140ms var(--ease) backwards }
+.f-dialogue narrator.flipping{ animation:rise var(--t-2) var(--ease-back) backwards }
+.f-dialogue .messages{ flex:1;height:0;min-height:0;padding:var(--s-3) var(--s-4); }
+.f-dialogue .message{ margin:0 0 var(--s-3);max-width:80%;animation:settle var(--t-3) var(--ease-back) backwards }
+.f-dialogue .message.user{ margin-left:auto;text-align:right; }
+.f-dialogue .sender{ font-size:10.40px;letter-spacing:2.08px;color:var(--gold-500);margin-bottom:4.16px; }
+.f-dialogue .user .sender{ color:var(--peony-500);letter-spacing:0; }
+.f-dialogue .bubble{
+  display:inline-block;text-align:left;white-space:pre-wrap;word-break:break-word;line-height:1.7;
+  padding:10.40px var(--s-3);font-size:var(--f-body);color:var(--text-hi);
+  background:var(--ink-2);border:1px solid var(--line-1);border-radius:3.12px 10.40px 10.40px 10.40px;
+  box-shadow:var(--hl);
+}
+.f-dialogue .user .bubble{ background:var(--peony-surface);border-color:var(--line-peony);color:var(--peony-text); }
+.f-dialogue .thinking{ display:flex;align-items:center;gap:7.28px;margin-bottom:var(--s-3); }
+.f-dialogue .thinking text{ display:block;width:5.20px;height:5.20px;border-radius:50%;background:var(--gold-500);animation:bob 1.1s var(--ease) infinite; }
+.f-dialogue .thinking text:nth-child(2){ animation-delay:.15s; }
+.f-dialogue .thinking text:nth-child(3){ animation-delay:.3s; }
+.f-dialogue .thinking .muted{ font-size:var(--f-caption); }
+.f-dialogue .retry{ margin-bottom:var(--s-3); }
+.f-dialogue .controls{ flex:0 0 auto;background:var(--ink-1);border-top:1px solid var(--line-2);padding:10.40px var(--s-4) calc(12.48px + 0px);animation:rise var(--t-3) 210ms var(--ease) backwards }
+.f-dialogue .actions,.f-dialogue .composer{ display:flex;align-items:center;gap:7.28px; }
+.f-dialogue .composer{ margin-top:10.40px; }
+.f-dialogue .field{ flex:1;min-width:0;height:45.76px;display:flex;align-items:center;padding:0 12.48px;background:var(--ink-0);border:1px solid var(--line-2);border-radius:var(--r-sm); }
+.f-dialogue .field input{ flex:1;min-width:0;height:45.76px;line-height:45.76px;padding:0;background:transparent;border:0;font-size:var(--f-body);color:var(--text-hi); }
+.f-dialogue .send{ flex:0 0 auto;margin:0;padding:0 var(--s-4);height:45.76px;line-height:44.72px; }
+
+
+@keyframes bob { 50% {transform:translateY(-4.16px);opacity:.5} }
+
+@keyframes pulse { 50% {opacity:.35;transform:scale(.8)} }
+.f-map .map-.phone{ position:relative;padding-bottom:calc(var(--s-4) + 0px); }
+.f-map .map-ink{
+  position:absolute;top:0;left:0;width:100%;height:109.20px;
+  opacity:.10;mix-blend-mode:lighten;pointer-events:none;
+}
+.f-map .map{ width:100%;height:337.60px;min-height:218.40px;margin-top:var(--s-3);background:var(--ink-1);border:1px solid var(--line-2);border-radius:var(--r-md);animation:rise var(--t-3) 70ms var(--ease) backwards }
+.f-map .retry{ margin-top:var(--s-2); }
+.f-map .map-page .title{ animation:rise var(--t-3) var(--ease) backwards }
+.f-map .map-note{ margin-top:10.40px; }
+.f-map .brief{
+  margin-top:var(--s-3);padding:var(--s-4);
+  background:var(--ink-1);border:1px solid var(--line-2);border-radius:var(--r-md);
+  box-shadow:var(--hl);
+  animation:rise var(--t-3) 140ms var(--ease) backwards;
+}
+.f-map .brief.flipping{ animation:rise var(--t-2) var(--ease-back) backwards }
+.f-map .head{ align-items:flex-start;margin-bottom:var(--s-2); }
+.f-map .who{ flex:1;min-width:0; }
+.f-map .who .kicker{ margin-bottom:3.12px; }
+.f-map .head .small{ flex:0 0 auto;width:max-content; }
+.f-map .chips{ display:flex;flex-wrap:wrap;gap:5.20px;margin-bottom:var(--s-3); }
+.f-map .chip-stop{
+  padding:4.16px 9.36px;font-size:10.40px;color:var(--text-mid);
+  background:var(--ink-0);border:1px solid var(--line-1);border-radius:519.48px;
+  transition:background var(--t-2),color var(--t-2),border-color var(--t-2);
+  animation:rise var(--t-3) var(--ease) backwards;
+}
+.f-map .chip-stop.on{ background:var(--gold-500);border-color:var(--gold-500);color:var(--on-gold); }
+.f-map .sec{ border-top:1px solid var(--line-1);margin-top:var(--s-2);padding-top:var(--s-2); }
+.f-map .sec-t{ font-size:var(--f-kicker);letter-spacing:2.08px;color:var(--gold-500);margin-bottom:5.20px; }
+.f-map .sec-b{ display:block;white-space:pre-wrap;word-break:break-word;line-height:1.85;font-size:var(--f-body);color:var(--text-mid); }
+.f-map .near{ display:flex;align-items:flex-start;gap:6.24px;margin-top:6.24px;font-size:var(--f-caption);line-height:1.7;color:var(--text-mid); }
+.f-map .near .tag{
+  flex:0 0 20.80px;width:20.80px;height:20.80px;line-height:19.76px;text-align:center;
+  border:1px solid var(--line-2);border-radius:50%;color:var(--gold-300);font-size:10.40px;
+}
+.f-map .near .nb{ flex:1;min-width:0; }
+.f-map .hint{ margin-bottom:var(--s-3); }
+.f-map .locate{ margin-top:var(--s-3); }
+.f-map .errrow{ display:flex;flex-direction:column;align-items:flex-start;gap:var(--s-1);margin-top:var(--s-2); }
+.f-map .errrow .muted{ flex:1;min-width:0;color:var(--alert); }
+.f-story .story .title{ margin:6.24px 0 0; }
+.f-story .story .kicker{ animation:rise var(--t-3) var(--ease) backwards }
+.f-story .story .title{ animation:rise var(--t-3) 70ms var(--ease) backwards }
+.f-story .hero{
+  display:block;width:100%;height:131.04px;border-radius:var(--r-md);margin:var(--s-3) 0;
+  animation:rise var(--t-3) 140ms var(--ease-back) backwards;
+}
+.f-story .story narrator{ display:block;animation:rise var(--t-3) 210ms var(--ease) backwards }
+.f-story .story .card{ animation:rise var(--t-3) 280ms var(--ease) backwards }
+.f-story .story .card + .card{ animation-delay:350ms }
+.f-story .passage{ margin-top:10.40px;font-size:var(--f-body);line-height:1.8;color:var(--text-hi); }
+.f-story .tip{ margin-top:10.40px; }
+.f-story .dot.peony{ background:var(--peony-500); }
+.f-story .src{ display:flex;align-items:center;gap:6.24px;margin-top:10.40px;font-size:10.40px;color:var(--text-low); }
+.f-story .src .lb{ flex:0 0 auto;letter-spacing:1.04px; }
+.f-story .src .link{ color:var(--gold-300);border-bottom:1px solid var(--line-2);overflow:hidden;white-space:nowrap;text-overflow:ellipsis; }
+narrator .narrator{
+  position:relative;display:flex;flex-direction:column;gap:var(--s-2);
+  min-height:122.72px;padding:10.40px var(--s-3);
+  background:var(--ink-1);border:1px solid var(--line-1);border-radius:var(--r-md);
+  box-shadow:var(--hl);overflow:hidden;
+}
+narrator .row-line{ display:flex;align-items:center;gap:var(--s-3); }
+narrator .portrait-wrap{ position:relative;flex-shrink:0;width:76.96px;height:104.00px;z-index:2; }
+narrator .portrait{ width:100%;height:100%;position:relative; }
+narrator .voice{ flex:1;position:relative;z-index:2;min-width:0; }
+narrator .voice-button{
+  position:absolute;left:50%;bottom:3.12px;transform:translateX(-50%);margin:0;
+  width:max-content;height:27.04px;line-height:26.00px;padding:0 11.44px;
+  font-size:10.40px;letter-spacing:1.04px;color:var(--gold-100);
+  background:var(--ink-0);border:1px solid var(--gold-500);border-radius:519.48px;
+}
+narrator .voice-button.on{ background:var(--gold-500);color:var(--on-gold); }
+narrator .script{
+  position:relative;z-index:2;display:block;white-space:pre-wrap;word-break:break-word;
+  line-height:1.9;font-size:var(--f-body);color:var(--text-mid);
+  border-top:1px solid var(--line-1);padding-top:var(--s-2);
+}
+narrator .ink{
+  position:absolute;left:0;top:0;width:72%;height:100%;
+  opacity:.07;mix-blend-mode:lighten;pointer-events:none;
+}
+narrator .meter{ display:flex;align-items:center;gap:6.24px;margin-top:7.28px; }
+narrator .meter .track{ flex:1;height:2.08px;background:var(--line-1);border-radius:2.08px;overflow:hidden; }
+narrator .meter .fill{ height:100%;width:0;background:var(--gold-500);transition:width var(--t-4) linear; }
+narrator .meter .faint{ flex:0 0 auto;letter-spacing:0.52px; }
+narrator .mouth{ display:flex;gap:2.08px;align-items:flex-end;height:12.48px;flex:0 0 auto; }
+narrator .mouth text{ display:block;width:2.08px;height:3.12px;background:var(--gold-500);border-radius:1.04px;transition:height var(--t-0) linear }
+empress .figure,empress .surface,empress .fallback{ width:100%;height:100%;display:block; }
+empress .figure{ position:relative; }
+empress .surface,empress .fallback{ position:absolute;top:0;left:0; }
+empress .hidden{ opacity:0; }
+.f-intro,.f-choose,.f-dialogue,.f-map,.f-story { display:flex;flex-direction:column;min-height:0;flex:1 }
+.img-el { display:block }
+[data-canvas],[data-map] { background:repeating-linear-gradient(45deg,rgba(198,164,107,.08) 0 8px,transparent 8px 16px) }
+.narr-slot { display:contents }
+empress,narrator { display:block;position:relative }
+</style></head><body>
+<h1>武则天带你游洛阳 · 落地渲染检查（真实 WXML + 真实 WXSS）</h1>
+<div class="strip">
+<div class="cell"><h2>01 启动页</h2><div class="phone f-intro"><div class="navbar">启动页</div><div class="f-intro-root"><div class="opening "><div class="mist mist-a"></div><div class="mist mist-b"></div><div class="inscription"><div class="kicker">武周 · 洛阳</div><div class="display">神都筑影</div></div><div class="silhouettes" data-canvas="silhouettes"></div><empress class="empress"><div class="figure"><img class="fallback" src="../assets/empress.webp"></div></empress><div class="petal" style="left:9%;animation-delay:-600ms"></div><div class="petal" style="left:31%;animation-delay:-2200ms"></div><div class="petal" style="left:73%;animation-delay:-3800ms"></div><div class="petal" style="left:90%;animation-delay:-1500ms"></div><div class="invitation">女皇邀你，共览神都洛阳</div></div></div></div></div>
+<div class="cell"><h2>02 游历选择 · 第二折</h2><div class="phone f-choose"><div class="navbar">游历选择 · 第二折</div><div class="f-choose-root"><div class="screen choose "><div class="home-back">‹</div><img class="backdrop" src="../assets/palace-1.webp"><div class="welcome"><empress class="portrait"><div class="figure"><img class="fallback" src="../assets/empress.webp"></div></empress><div class="welcome-copy"><div class="kicker">武周 · 神都游历</div><div class="title lg">请与朕选定本次游历</div><div class="muted">依照想走的顺序勾选景点</div></div></div><div class="step-rail"><div class="st done"><span class="d">壹</span><span class="lb">时长</span></div><div class="bar"></div><div class="st now"><span class="d">贰</span><span class="lb">景点</span></div><div class="bar"></div><div class="st "><span class="d">叁</span><span class="lb">启程</span></div></div><div class="card stage "><div class="row"><div class="kicker">第二折 · 5 站</div><div class="text-btn back">重选时长</div></div><div class="row head"><div class="heading">景点勾选</div><div class="counter">已选 <span >5</span> / 5</div></div><div class="places"><div class="choice place picked" style="animation-delay:0ms"><span class="badge">1</span><span class="place-name">应天门</span></div><div class="choice place picked" style="animation-delay:45ms"><span class="badge">2</span><span class="place-name">明堂</span></div><div class="choice place picked" style="animation-delay:90ms"><span class="badge">3</span><span class="place-name">天堂</span></div><div class="choice place picked" style="animation-delay:135ms"><span class="badge">4</span><span class="place-name">九洲池</span></div><div class="choice place picked" style="animation-delay:180ms"><span class="badge">5</span><span class="place-name">龙门石窟奉先寺</span></div><div class="choice place " style="animation-delay:225ms"><span class="badge">＋</span><span class="place-name">上阳宫</span></div><div class="choice place " style="animation-delay:270ms"><span class="badge">＋</span><span class="place-name">定鼎门天街</span></div></div><div class="rule"></div><div class="route"><div class="node"><span class="num">1</span>应天门</div><div class="node"><span class="num">2</span>明堂</div><div class="node"><span class="num">3</span>天堂</div><div class="node"><span class="num">4</span>九洲池</div><div class="node"><span class="num">5</span>龙门石窟奉先寺</div></div></div><div class="primary start">启程入神都</div></div></div></div></div>
+<div class="cell"><h2>03 对话页</h2><div class="phone f-dialogue"><div class="navbar">对话页</div><div class="f-dialogue-root"><div class="dialogue"><div class="top"><div class="stop "><div class="kicker">第 1 / 3 站</div><div class="title lg spot">应天门</div></div><div class="chip"><div class="dot "></div>本地导览</div><div class="secondary small">游历地图</div></div><div class="step-rail"><div ><div class="st  now"><span class="d">1</span><span class="lb">应天门</span></div></div><div ><div class="bar"></div><div class="st  now"><span class="d">2</span><span class="lb">明堂</span></div></div><div ><div class="bar"></div><div class="st  now"><span class="d">3</span><span class="lb">天堂</span></div></div></div><narrator class="undefined"><div class="narr-slot"><div class="narrator"><img class="ink" src="../assets/palace-2.webp"><div class="row-line"><div class="portrait-wrap"><empress class="portrait"><div class="figure"><img class="fallback" src="../assets/empress.webp"></div></empress><div class="voice-button on">暂停</div></div><div class="voice"><div class="row"><div class="kicker">播放中 · 口型随音轨</div><div class="mouth"><span style="height:4.5rpx"></span><span style="height:7rpx"></span><span style="height:9.5rpx"></span><span style="height:12rpx"></span></div></div><div class="meter"><div class="track"><div class="fill" style="width:63.1578947368421%"></div></div><div class="faint">12 / 19 秒</div></div></div></div><span class="script">且随朕先看应天门。它和明堂、天堂、九洲池都在隋唐洛阳城的宫城区。站在这座门前，不妨想一想，宫城的尺度是如何被一扇门展示出来的。</span></div></div></narrator><div class="messages"><div class="message user"><div class="sender">你</div><span class="bubble">这里有什么传说？</span></div><div class="message assistant"><div class="sender">武则天</div><span class="bubble">民间传说卢舍那大佛依朕的面容雕成。此说流传甚广，现有材料能确认的是出资记录，面容原型仍无定论。</span></div></div><div class="controls"><div class="actions"><div class="secondary small">此站故事</div><div class="secondary small">问传说</div></div><div class="composer"><div class="field"><input placeholder="想问朕些什么？" value=""></div><div class="secondary send">发送</div></div></div></div></div></div></div>
+<div class="cell"><h2>04 游历地图</h2><div class="phone f-map"><div class="navbar">游历地图</div><div class="f-map-root"><div class="screen map-page"><img class="map-ink" src="../assets/palace-4.webp"><div class="kicker">神都 · 点位</div><div class="title lg">游历地图</div><div class="map" data-map="1"></div><div class="muted map-note">景点坐标为参考点位，出行前请核对实际入口。</div><div class="brief "><div class="row head"><div class="who"><div class="kicker">第 2 站</div><div class="heading">明堂</div></div><div class="secondary small">打开听卷</div></div><div class="chips"><div class="chip-stop " style="animation-delay:0ms">1 应天门</div><div class="chip-stop on" style="animation-delay:45ms">2 明堂</div><div class="chip-stop " style="animation-delay:90ms">3 天堂</div><div class="chip-stop " style="animation-delay:135ms">4 九洲池</div><div class="chip-stop " style="animation-delay:180ms">5 奉先寺</div></div><div ><div class="sec"><div class="sec-t">时代变迁</div><span class="sec-b">明堂为武周布政之宫，号万象神宫，证圣元年毁于火后重建为通天宫。北宋以后渐废，遗址于 20 世纪下半叶经考古确认，其上建成遗址保护展示厅，中心柱坑作原状陈列。</span></div><div class="sec"><div class="sec-t">今天 · 周边</div><div class="near"><span class="tag">食</span><span class="nb">西工一带的浆面条、糊涂面等本地小吃铺子集中。</span></div><div class="near"><span class="tag">游</span><span class="nb">与天堂同属隋唐洛阳城国家遗址公园，可联游。</span></div></div></div><div class="primary block locate">我的位置</div><div class="errrow"><div class="muted">请在微信设置中允许定位，或直接查看景点。</div><div class="text-btn">打开定位设置</div></div></div></div></div></div></div>
+<div class="cell"><h2>05 听卷</h2><div class="phone f-story"><div class="navbar">听卷</div><div class="f-story-root"><div class="screen story"><div ><div class="kicker">神都 · 听卷</div><div class="title lg">龙门石窟奉先寺</div><img class="hero" src="../assets/palace-5.webp"><narrator class="undefined"><div class="narr-slot"><div class="narrator"><img class="ink" src="../assets/palace-2.webp"><div class="row-line"><div class="portrait-wrap"><empress class="portrait"><div class="figure"><img class="fallback" src="../assets/empress.webp"></div></empress><div class="voice-button ">继续</div></div><div class="voice"><div class="row"><div class="kicker">女皇 · 语音讲解</div></div><div class="meter"><div class="track"><div class="fill" style="width:36.8421052631579%"></div></div><div class="faint">7 / 19 秒</div></div></div></div></div></div></narrator><div class="card"><div class="row"><div class="heading">此站讲解</div><div class="chip">底稿</div></div><div class="passage">随朕到伊水边看奉先寺。像龛记记下朕为皇后时，曾出脂粉钱两万贯助造。你眼前的卢舍那像龛，在唐高宗上元二年完工。</div><div class="src"><span class="lb">来源</span><span class="link">ir.pku.edu.cn</span></div></div><div class="card featured"><div class="row"><div class="heading">传说</div><div class="chip"><div class="dot peony"></div>非正史</div></div><div class="passage">民间传说卢舍那大佛依朕的面容雕成。此说流传甚广，现有材料能确认的是出资记录，面容原型仍无定论。</div><div class="src"><span class="lb">来源</span><span class="link">www.edb.gov.hk</span></div></div></div></div></div></div></div></div>
+</body></html>

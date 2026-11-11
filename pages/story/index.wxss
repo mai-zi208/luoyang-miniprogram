@@ -1,2 +1,17 @@
-.hero { display: block; width: 100%; height: 320rpx; border-radius: 22rpx; margin-bottom: 24rpx; background: #eadfca; }
-.tag { display: inline-block; padding: 6rpx 18rpx; background: #f2e4cb; border-radius: 24rpx; color: #702c1e; }
+.story .title { margin:12rpx 0 0; }
+/* 听卷是逐层展开的卷面：题名 → 图 → 讲解台 → 底稿 → 传说，各自晚一档浮起。 */
+.story .kicker { animation:rise var(--t-3) var(--ease) backwards }
+.story .title { animation:rise var(--t-3) 70ms var(--ease) backwards }
+.hero {
+  display:block;width:100%;height:252rpx;border-radius:var(--r-md);margin:var(--s-3) 0;
+  animation:rise var(--t-3) 140ms var(--ease-back) backwards;
+}
+.story narrator { display:block;animation:rise var(--t-3) 210ms var(--ease) backwards }
+.story .card { animation:rise var(--t-3) 280ms var(--ease) backwards }
+.story .card + .card { animation-delay:350ms }
+.passage { margin-top:20rpx;font-size:var(--f-body);line-height:1.8;color:var(--text-hi); }
+.tip { margin-top:20rpx; }
+.dot.peony { background:var(--peony-500); }
+.src { display:flex;align-items:center;gap:12rpx;margin-top:20rpx;font-size:20rpx;color:var(--text-low); }
+.src .lb { flex:0 0 auto;letter-spacing:2rpx; }
+.src .link { color:var(--gold-300);border-bottom:1px solid var(--line-2);overflow:hidden;white-space:nowrap;text-overflow:ellipsis; }

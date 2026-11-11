@@ -1,0 +1,46 @@
+<view wx:if="{{stop}}" class="dialogue">
+  <view class="top">
+    <view class="stop {{flipping ? 'flipping' : ''}}">
+      <view class="kicker">第 {{index + 1}} / {{route.length}} 站</view>
+      <view class="title lg spot">{{stop.name}}</view>
+    </view>
+    <view class="chip"><view class="dot {{online ? 'live' : ''}}"></view>{{online ? 'AI 文字对话' : '本地导览'}}</view>
+    <button class="secondary small" hover-class="pressed" bindtap="openMap">游历地图</button>
+  </view>
+  <view class="step-rail">
+    <block wx:for="{{route}}" wx:for-item="s" wx:for-index="i" wx:key="id">
+      <view wx:if="{{i}}" class="bar"></view>
+      <view class="st {{i < index ? 'done' : ''}} {{i === index ? 'now' : ''}}" hover-class="pressed" data-i="{{i}}" bindtap="jumpStop">
+        <text class="d">{{i + 1}}</text><text class="lb">{{s.short || s.name}}</text>
+      </view>
+    </block>
+  </view>
+  <narrator class="{{flipping ? 'flipping' : ''}}" stop-id="{{stop.id}}" script="{{stop.story}}" />
+  <scroll-view class="messages" scroll-y scroll-with-animation scroll-into-view="{{anchor}}">
+    <view wx:for="{{messages}}" wx:key="id" id="message-{{item.id}}" class="message {{item.role}}">
+      <view class="sender">{{item.role === 'user' ? '你' : '武则天'}}</view>
+      <text class="bubble" selectable>{{item.content}}</text>
+    </view>
+    <view wx:if="{{waiting}}" class="thinking"><text></text><text></text><text></text><view class="muted">女皇正在思索…</view></view>
+    <view wx:if="{{failedQuestion}}" class="notice retry" hover-class="pressed" bindtap="retry">讲解暂时没回应，点此重试</view>
+  </scroll-view>
+  <view class="controls">
+    <view class="actions">
+      <button class="secondary small" hover-class="pressed" disabled="{{waiting}}" data-question="讲讲这里的故事" bindtap="askPreset">此站故事</button>
+      <button class="secondary small" hover-class="pressed" disabled="{{waiting}}" data-question="这里有什么传说？" bindtap="askPreset">问传说</button>
+    </view>
+    <view class="composer">
+      <view class="field">
+        <input value="{{draft}}" maxlength="300" placeholder="想问朕些什么？" confirm-type="send" bindinput="typeQuestion" bindconfirm="send" />
+      </view>
+      <button class="secondary send" hover-class="pressed" disabled="{{waiting}}" bindtap="send">发送</button>
+    </view>
+  </view>
+</view>
+<view wx:else class="screen">
+  <view class="card">
+    <view class="row"><view class="heading">还没选定景点</view><view class="chip">空</view></view>
+    <view class="muted">请先选定本次游历的景点。</view>
+    <navigator class="secondary" hover-class="pressed" open-type="redirect" url="/pages/choose/index">返回游历选择</navigator>
+  </view>
+</view>

@@ -1,0 +1,13 @@
+<view class="opening {{leaving ? 'leaving' : ''}}" bindtap="advance">
+  <view class="mist mist-a"></view><view class="mist mist-b"></view>
+  <view class="inscription">
+    <view class="kicker">武周 · 洛阳</view>
+    <view class="display">神都筑影</view>
+  </view>
+  <canvas type="2d" id="silhouettes" class="silhouettes"></canvas>
+  <empress class="empress" />
+  <view wx:for="{{petals}}" wx:key="id" class="petal" style="left:{{item.left}}%;animation-delay:{{item.delay}}ms"></view>
+  <view wx:if="{{ready}}" class="invitation" hover-class="beckoned">女皇邀你，共览神都洛阳</view>
+  <view wx:if="{{leaving}}" class="sweep"></view>
+  <button wx:if="{{failed}}" class="skip" hover-class="pressed" bindtap="advance">进入游历选择</button>
+</view>

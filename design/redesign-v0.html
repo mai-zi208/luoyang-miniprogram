@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>武则天带你游洛阳 · 重设计 v0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ============ 已确认的设计系统（落地时翻译为 app.wxss 的 CSS 变量） ============ */
+:root{
+  /* 墨阶 */
+  --ink-0:#0A1A1D; --ink-1:#12262B; --ink-2:#1A343A; --ink-3:#214147;
+  /* 金阶 */
+  --gold-100:#F4E6CA; --gold-300:#E0C48F; --gold-500:#C6A46B;
+  /* 描边：全站仅此两值 */
+  --line-1:rgba(198,164,107,.16); --line-2:rgba(198,164,107,.30);
+  /* 文字 */
+  --text-hi:#F0E6D4; --text-mid:#B7C3BB; --text-low:#8A9B95;
+  /* 牡丹：仅花瓣与「你」的气泡 */
+  --peony-500:#B4708A; --peony-surface:#33252E;
+  --alert:#EBA9AF;
+  /* 空间：8rpx 网格，此处为 390pt 下的 px（= rpx/2） */
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
+  /* 圆角三档 */
+  --r-sm:6px; --r-md:10px; --r-lg:14px;
+  /* 字号阶梯 */
+  --f-d1:28px; --f-d2:22px; --f-title:18px; --f-section:15px; --f-body:14px; --f-caption:12px; --f-kicker:11px;
+  /* 动效 */
+  --ease:cubic-bezier(.22,.7,.32,1); --t-1:160ms; --t-2:240ms; --t-3:420ms; --t-4:1200ms;
+  /* 分层：墨阶台阶 + 顶部内高光，不用彩色阴影 */
+  --hl:inset 0 1px 0 rgba(244,230,202,.07);
+  --lift:0 12px 30px rgba(0,0,0,.45);
+  --serif:"Songti SC","Noto Serif SC","Source Han Serif SC","SimSun",serif;
+  --sans:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#051012;color:var(--text-hi);font-family:var(--sans);padding:var(--s-7) var(--s-6) 96px;
+  -webkit-font-smoothing:antialiased}
+
+/* ---------- 画布自身的外壳（不属于设计系统） ---------- */
+.canvas-head{max-width:1360px;margin:0 auto var(--s-7)}
+.canvas-head h1{font-family:var(--serif);font-size:34px;font-weight:600;color:var(--gold-100);letter-spacing:2px}
+.canvas-head p{color:var(--text-mid);font-size:13px;line-height:1.7;margin-top:var(--s-3);max-width:74ch}
+.tag{display:inline-block;font-size:11px;letter-spacing:2px;color:var(--gold-300);
+  border:1px solid var(--line-2);border-radius:var(--r-sm);padding:3px 9px;margin-right:6px}
+.tokenbar{display:flex;flex-wrap:wrap;gap:var(--s-4);max-width:1360px;margin:0 auto var(--s-7);
+  padding:var(--s-4);background:var(--ink-1);border:1px solid var(--line-1);border-radius:var(--r-md);box-shadow:var(--hl)}
+.token-group{min-width:220px}
+.token-group>b{display:block;font-size:10px;letter-spacing:2px;color:var(--text-low);margin-bottom:var(--s-2);font-weight:500}
+.swatches{display:flex;gap:2px}
+.sw{width:34px;height:34px;border-radius:4px;position:relative}
+.sw span{position:absolute;bottom:-15px;left:0;font-size:9px;color:var(--text-low);font-family:var(--serif)}
+.scale-row{display:flex;align-items:baseline;gap:var(--s-3);color:var(--text-mid);font-size:11px}
+.scale-row i{font-style:normal;font-family:var(--serif);color:var(--gold-100)}
+.scale-row .s28{font-size:28px}.scale-row .s22{font-size:22px}.scale-row .s18{font-size:18px}
+.scale-row .s15{font-size:15px}.scale-row .s14{font-size:14px}.scale-row .s11{font-size:11px;letter-spacing:2px}
+.grid-row{display:flex;align-items:flex-end;gap:3px}
+.grid-row u{text-decoration:none;width:12px;background:var(--gold-500);opacity:.5;display:block}
+
+.gallery{display:flex;flex-wrap:wrap;gap:var(--s-7) var(--s-6);justify-content:center;max-width:1560px;margin:0 auto}
+.unit{width:390px}
+.unit>h2{font-family:var(--serif);font-size:15px;color:var(--gold-300);margin-bottom:var(--s-2);letter-spacing:1px}
+.unit>h2 em{font-style:normal;color:var(--text-low);font-size:11px;letter-spacing:2px;margin-left:8px}
+.unit>p{font-size:12px;color:var(--text-low);line-height:1.65;margin-bottom:var(--s-3);min-height:34px}
+
+/* ---------- 设备框 ---------- */
+.phone{position:relative;width:390px;height:844px;background:var(--ink-0);border:1px solid var(--line-1);
+  border-radius:26px;overflow:hidden;display:flex;flex-direction:column}
+.status{height:44px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-low);letter-spacing:1px}
+.navbar{height:44px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;
+  background:var(--ink-0);border-bottom:1px solid var(--line-1)}
+.navbar .back{position:absolute;left:16px;top:45px;font-size:13px;color:var(--gold-300)}
+.viewport{flex:1;min-height:0;position:relative;overflow:hidden;padding:0 var(--s-4)}
+.watermark{position:absolute;pointer-events:none;opacity:.20}
+.figure-full{position:absolute;pointer-events:none}
+/* v0 画布注记：不属于界面，落地即删除 */
+.v0note{font-size:11px;line-height:1.65;color:var(--text-low);border-top:1px dashed var(--line-1);
+  padding-top:8px;margin-top:var(--s-3)}
+.v0note:before{content:"v0 注记";display:block;font-size:9px;letter-spacing:2px;color:var(--gold-500);margin-bottom:3px}
+
+/* ---------- 通用组件 ---------- */
+.kicker{font-size:var(--f-kicker);letter-spacing:4px;color:var(--gold-500);line-height:1.4}
+.title{font-family:var(--serif);font-size:var(--f-title);font-weight:600;color:var(--gold-100);line-height:1.25}
+.display{font-family:var(--serif);font-size:var(--f-d2);font-weight:600;color:var(--gold-100);line-height:1.2}
+.section{font-size:var(--f-section);font-weight:600;color:var(--text-hi)}
+.body{font-size:var(--f-body);line-height:1.7;color:var(--text-hi)}
+.muted{font-size:var(--f-caption);line-height:1.7;color:var(--text-mid)}
+.rule{height:1px;background:var(--line-1);margin:var(--s-4) 0}
+.card{background:var(--ink-2);border:1px solid var(--line-1);border-radius:var(--r-md);padding:var(--s-4);
+  box-shadow:var(--hl)}
+.card.raised{background:var(--ink-3)}
+.card.featured{border-color:var(--line-2);background:linear-gradient(160deg,var(--ink-3),var(--ink-2) 62%)}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;height:44px;border-radius:var(--r-sm);
+  font-size:var(--f-body);cursor:pointer;border:1px solid transparent;transition:transform var(--t-1) var(--ease),filter var(--t-1)}
+.btn.sm{height:34px;padding:0 12px;font-size:var(--f-caption);width:auto;flex:0 0 auto}
+.btn.primary{background:linear-gradient(112deg,var(--gold-100),var(--gold-500));color:#0F2226;font-weight:600}
+.btn.ghost{background:var(--ink-3);color:var(--gold-100);border-color:var(--line-2)}
+.btn.text{background:none;color:var(--gold-300);height:auto;padding:2px 0;font-size:var(--f-caption)}
+.btn.pressed{transform:scale(.98);filter:brightness(1.06)}
+.btn.off{background:var(--ink-2);color:var(--text-low);border-color:var(--line-1);opacity:1}
+.choice{display:flex;align-items:center;gap:8px;min-height:46px;padding:10px 12px;border-radius:var(--r-sm);
+  background:var(--ink-1);border:1px solid var(--line-1);color:var(--text-hi);font-size:var(--f-caption);line-height:1.5}
+.choice.on{background:var(--ink-3);border-color:var(--gold-500);color:var(--gold-100)}
+.badge{flex:0 0 22px;height:22px;display:grid;place-items:center;border-radius:50%;font-size:11px;
+  border:1px solid var(--line-2);color:var(--gold-300)}
+.choice.on .badge{background:var(--gold-500);color:#0F2226;border-color:var(--gold-500)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:1px;color:var(--text-mid);
+  border:1px solid var(--line-1);border-radius:999px;padding:3px 9px}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--gold-300)}
+.notice{font-size:var(--f-caption);line-height:1.6;color:var(--alert)}
+.ph{border:1px dashed var(--line-2);border-radius:var(--r-sm);background:repeating-linear-gradient(135deg,
+  rgba(198,164,107,.05) 0 8px,transparent 8px 16px);color:var(--text-low);font-size:11px;
+  display:grid;place-items:center;text-align:center;line-height:1.6;padding:8px}
+.mark{position:absolute;z-index:5;width:19px;height:19px;border-radius:50%;background:var(--ink-0);
+  border:1px solid var(--gold-300);color:var(--gold-100);font-size:10px;display:grid;place-items:center;font-family:var(--serif)}
+.step-rail{display:flex;align-items:center;gap:6px;padding:var(--s-3) 0 var(--s-2)}
+.step-rail .st{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-low);letter-spacing:1px}
+.step-rail .st b{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;font-weight:400;
+  border:1px solid var(--line-1);font-size:9px}
+.step-rail .st.done b{border-color:var(--gold-500);color:var(--gold-300)}
+.step-rail .st.now{color:var(--gold-100)}
+.step-rail .st.now b{background:var(--gold-500);color:#0F2226;border-color:var(--gold-500)}
+.step-rail .bar{flex:1;height:1px;background:var(--line-1)}
+
+/* 01 intro */
+.opening{position:relative;flex:1;min-height:0;background:radial-gradient(ellipse at 70% 66%,var(--ink-2),var(--ink-0) 68%);
+  overflow:hidden;padding:0}
+.inscription{position:absolute;top:11%;left:9%;z-index:3}
+.inscription .display{font-size:var(--f-d1);letter-spacing:5px}
+.petal{position:absolute;width:8px;height:12px;border-radius:80% 15% 65% 22%;background:var(--peony-500);opacity:.42}
+.invite{position:absolute;bottom:9%;left:0;right:0;text-align:center;font-family:var(--serif);
+  font-size:17px;letter-spacing:3px;color:var(--gold-100);z-index:3}
+
+/* 02-03 choose */
+.welcome{display:flex;align-items:center;gap:var(--s-3);min-height:132px;padding-top:var(--s-3)}
+.welcome img{width:96px;height:150px;object-fit:contain;flex:0 0 96px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2)}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-2)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:var(--s-2)}
+
+/* 04 dialogue */
+.top{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) 0}
+.top .grow{flex:1;min-width:0}
+.narrator{position:relative;display:flex;align-items:center;gap:var(--s-3);background:var(--ink-1);
+  border:1px solid var(--line-1);border-radius:var(--r-md);padding:10px var(--s-3);overflow:hidden;box-shadow:var(--hl)}
+.narrator img.p{width:78px;height:104px;object-fit:contain;position:relative;z-index:2;flex:0 0 78px}
+.narrator .v{flex:1;position:relative;z-index:2}
+.msgs{flex:1;min-height:0;padding:var(--s-3) 0;overflow:hidden}
+.msg{max-width:80%;margin-bottom:var(--s-3)}
+.msg .who{font-size:10px;letter-spacing:2px;color:var(--gold-500);margin-bottom:4px}
+.msg .bubble{display:block;font-size:var(--f-body);line-height:1.7;padding:10px 12px;border-radius:3px 10px 10px 10px;
+  background:var(--ink-2);border:1px solid var(--line-1);box-shadow:var(--hl)}
+.msg.me{margin-left:auto;text-align:right}
+.msg.me .who{color:var(--peony-500);letter-spacing:0}
+.msg.me .bubble{background:var(--peony-surface);border-color:rgba(180,112,138,.28);text-align:left;color:#F2E3E5}
+.composer{display:flex;gap:var(--s-2);align-items:center;padding:var(--s-3) 0 var(--s-4)}
+.field{flex:1;height:44px;display:flex;align-items:center;padding:0 12px;border-radius:var(--r-sm);
+  border:1px solid var(--line-2);background:var(--ink-1);color:var(--text-low);font-size:var(--f-body)}
+.controls{background:var(--ink-1);border-top:1px solid var(--line-2);margin:0 calc(-1 * var(--s-4));padding:10px var(--s-4) 0}
+
+/* 05 map / 06 story */
+.list-row{display:flex;align-items:center;gap:var(--s-3);padding:10px 0;border-bottom:1px solid var(--line-1);font-size:var(--f-caption)}
+.list-row:last-child{border-bottom:0}
+.list-row .num{flex:0 0 18px;color:var(--gold-500);font-family:var(--serif)}
+.hero{width:100%;height:126px;object-fit:cover;border-radius:var(--r-md);display:block;margin:var(--s-3) 0}
+
+/* 07 组件规范 */
+.spec{background:var(--ink-1);border:1px solid var(--line-1);border-radius:var(--r-md);padding:var(--s-4);box-shadow:var(--hl)}
+.spec+.spec{margin-top:var(--s-3)}
+.spec>b{display:block;font-size:10px;letter-spacing:2px;color:var(--text-low);font-weight:500;margin-bottom:var(--s-3)}
+.spec .grid{display:flex;gap:var(--s-3);align-items:center;flex-wrap:wrap}
+figure{background:var(--ink-0);border:1px solid var(--line-1);border-radius:var(--r-sm);padding:6px;text-align:center}
+figure img{width:88px;height:120px;object-fit:contain}
+figure figcaption{font-size:10px;color:var(--text-low);margin-top:4px}
+
+/* 假设清单 */
+.assumptions{max-width:1360px;margin:var(--s-7) auto 0;padding:var(--s-5);background:var(--ink-1);
+  border:1px solid var(--line-1);border-radius:var(--r-md);box-shadow:var(--hl)}
+.assumptions h3{font-family:var(--serif);font-size:18px;color:var(--gold-100);margin-bottom:var(--s-4)}
+.assumptions ol{list-style:none;counter-reset:a}
+.assumptions li{counter-increment:a;display:flex;gap:var(--s-3);padding:10px 0;border-bottom:1px solid var(--line-1);font-size:13px;line-height:1.7;color:var(--text-mid)}
+.assumptions li:last-child{border-bottom:0}
+.assumptions li:before{content:counter(a);flex:0 0 20px;height:20px;border-radius:50%;border:1px solid var(--line-2);
+  color:var(--gold-300);font-size:10px;display:grid;place-items:center;font-family:var(--serif)}
+.assumptions li b{color:var(--text-hi);font-weight:600}
+.foot{max-width:1360px;margin:var(--s-5) auto;color:var(--text-low);font-size:12px;line-height:1.8}
+</style>
+</head>
+<body>
+
+<div class="canvas-head">
+  <h1>武则天带你游洛阳 · 重设计 v0</h1>
+  <div style="margin:12px 0 16px">
+    <span class="tag">REDESIGN · PRESERVE</span>
+    <span class="tag">390pt</span>
+    <span class="tag">7 屏骨架</span>
+    <span class="tag">文案/动效未补</span>
+  </div>
+  <p>这一版只验证三件事：<b style="color:var(--gold-100)">调性有没有走样</b>、<b style="color:var(--gold-100)">层级是不是比现在清楚</b>、
+  <b style="color:var(--gold-100)">dialogue 和 map 会不会塞不下</b>。虚线块是尚未落地内容的占位；编号黄点指向下方假设清单。</p>
+</div>
+
+<div class="tokenbar">
+  <div class="token-group"><b>墨阶 / 金阶</b>
+    <div class="swatches">
+      <div class="sw" style="background:var(--ink-0)"></div><div class="sw" style="background:var(--ink-1)"></div>
+      <div class="sw" style="background:var(--ink-2)"></div><div class="sw" style="background:var(--ink-3)"></div>
+      <div class="sw" style="background:var(--gold-100);margin-left:8px"></div>
+      <div class="sw" style="background:var(--gold-300)"></div><div class="sw" style="background:var(--gold-500)"></div>
+      <div class="sw" style="background:var(--peony-500)"></div><div class="sw" style="background:var(--alert)"></div>
+    </div>
+  </div>
+  <div class="token-group"><b>字号阶梯（px = rpx/2）</b>
+    <div class="scale-row"><i class="s28">28</i><i class="s22">22</i><i class="s18">18</i><i class="s15">15</i><i class="s14">14</i><span class="s11">11 碑刻</span></div>
+  </div>
+  <div class="token-group"><b>8rpx 网格 · 4/8/12/16/24/32/48</b>
+    <div class="grid-row">
+      <u style="height:4px"></u><u style="height:8px"></u><u style="height:12px"></u><u style="height:16px"></u>
+      <u style="height:24px"></u><u style="height:32px"></u><u style="height:48px"></u>
+    </div>
+  </div>
+  <div class="token-group"><b>描边 / 圆角 / 动效</b>
+    <div style="font-size:11px;color:var(--text-mid);line-height:1.9">
+      line-1 16% · line-2 30%<br>6 / 10 / 14 · 气泡 3-10-10-10<br>160 / 240 / 420 / 1200ms
+    </div>
+  </div>
+</div>
+
+<div class="gallery">
+
+  <!-- ============ 01 intro ============ -->
+  <div class="unit">
+    <h2>01 启动页 <em>pages/intro</em></h2>
+    <p>保留碑刻左上 + 立绘右下的非对称构图；把装饰层收成一档透明度、花瓣从满屏降到 6 片。</p>
+    <div class="phone">
+      <div class="status">9:41</div><div class="navbar">武则天带你游洛阳</div>
+      <div class="viewport opening">
+        <div class="mark" style="top:6%;right:6%">1</div>
+        <div class="inscription">
+          <div class="kicker">武周 · 洛阳</div>
+          <div class="display" style="margin-top:8px">神都筑影</div>
+        </div>
+        <div class="ph" style="position:absolute;top:26%;left:6%;width:50%;height:54%;z-index:2">[canvas 线描建筑]<br>应天门·明堂·天堂·九洲池·奉先寺<br>依次显影</div>
+        <div class="figure-full" style="bottom:10%;right:-4%;width:58%;height:66%;z-index:2">
+          <img src="../assets/empress.webp" style="width:100%;height:100%;object-fit:contain">
+        </div>
+        <div class="mark" style="bottom:24%;right:2%">2</div>
+        <span class="petal" style="top:14%;left:22%"></span><span class="petal" style="top:31%;left:64%"></span>
+        <span class="petal" style="top:48%;left:12%"></span><span class="petal" style="top:62%;left:48%"></span>
+        <span class="petal" style="top:22%;left:80%"></span><span class="petal" style="top:74%;left:30%"></span>
+        <div class="invite">女皇邀你，共览神都洛阳</div>
+        <div class="mark" style="bottom:5%;left:47%">3</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 02 choose 第一折 ============ -->
+  <div class="unit">
+    <h2>02 游历选择 · 第一折 <em>pages/choose</em></h2>
+    <p>新增折次进度条，让「先时长、后景点、再启程」这条三步路径在屏幕上可见；卡片从渐变改为墨阶台阶。</p>
+    <div class="phone">
+      <div class="status">9:41</div><div class="navbar">武则天带你游洛阳</div>
+      <div class="viewport">
+        <div class="watermark" style="top:-14px;left:-30px;width:450px;height:190px;opacity:.13">
+          <img src="../assets/palace-1.webp" style="width:100%;height:100%;object-fit:contain">
+        </div>
+        <div class="welcome" style="position:relative;z-index:2">
+          <img src="../assets/empress.webp" alt="">
+          <div>
+            <div class="kicker">武周 · 神都游历</div>
+            <div class="title" style="font-size:22px;margin:6px 0 8px">请与朕选定本次游历</div>
+            <div class="muted">先择游历时长</div>
+          </div>
+        </div>
+        <div class="step-rail" style="position:relative;z-index:2">
+          <span class="st now"><b>壹</b>时长</span><span class="bar"></span>
+          <span class="st"><b>贰</b>景点</span><span class="bar"></span>
+          <span class="st"><b>叁</b>启程</span>
+        </div>
+        <div class="mark" style="top:150px;left:6px">4</div>
+        <div class="card">
+          <div class="row"><div class="kicker">第一折</div><span class="chip"><span class="dot"></span>本地</span></div>
+          <div class="section" style="margin-top:6px">游历时长</div>
+          <div class="three" style="margin-top:var(--s-3)">
+            <div class="choice" style="flex-direction:column;align-items:center;gap:2px;padding:14px 6px">
+              <div style="font-size:14px">半日轻游</div><div class="muted">3 站</div></div>
+            <div class="choice on" style="flex-direction:column;align-items:center;gap:2px;padding:14px 6px">
+              <div style="font-size:14px">一日漫游</div><div class="muted" style="color:var(--gold-300)">5 站</div></div>
+            <div class="choice" style="flex-direction:column;align-items:center;gap:2px;padding:14px 6px">
+              <div style="font-size:14px">深度寻访</div><div class="muted">7 站</div></div>
+          </div>
+        </div>
+        <div class="v0note">选中态：底色升到 ink-3 + 描边升到 gold-500，文字升到 gold-100。现在的版本只换了 4 个不同色值，没有规则。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 03 choose 第二折 ============ -->
+  <div class="unit">
+    <h2>03 游历选择 · 第二折 <em>pages/choose</em></h2>
+    <p>勾选网格沿用两列，序号徽标从纯文字「1/＋」改为圆形徽标；「重选时长」从按钮降为文字链接，避免和主操作抢层级。</p>
+    <div class="phone">
+      <div class="status">9:41</div><div class="navbar">武则天带你游洛阳</div>
+      <div class="viewport">
+        <div class="step-rail">
+          <span class="st done"><b>壹</b>时长</span><span class="bar"></span>
+          <span class="st now"><b>贰</b>景点</span><span class="bar"></span>
+          <span class="st"><b>叁</b>启程</span>
+        </div>
+        <div class="card">
+          <div class="row">
+            <div class="kicker">第二折 · 5 站</div>
+            <div class="btn text">‹ 重选时长</div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <div class="section">景点勾选</div>
+            <div class="muted">已选 <b style="color:var(--gold-100);font-family:var(--serif)">3</b> / 5</div>
+          </div>
+          <div class="two" style="margin-top:var(--s-3)">
+            <div class="choice on"><span class="badge">1</span>应天门</div>
+            <div class="choice on"><span class="badge">2</span>明堂</div>
+            <div class="choice on"><span class="badge">3</span>天堂</div>
+            <div class="choice"><span class="badge">＋</span>九洲池</div>
+            <div class="choice"><span class="badge">＋</span>龙门石窟奉先寺</div>
+            <div class="choice"><span class="badge">＋</span>上阳宫</div>
+            <div class="choice"><span class="badge">＋</span>定鼎门天街</div>
+          </div>
+        </div>
+        <div class="mark" style="top:66px;right:6px">5</div>
+        <div style="flex:1"></div>
+        <div class="btn off" style="position:absolute;left:16px;right:16px;bottom:16px">启程入神都</div>
+        <div class="mark" style="bottom:28px;left:6px">6</div>
+        <div class="v0note" style="position:absolute;left:16px;right:16px;bottom:78px">已选 3 / 5 → 主按钮为禁用态（ink-2 + text-low，非现在的 opacity .55）；满 5 站后升为 primary 金底。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 04 dialogue ============ -->
+  <div class="unit">
+    <h2>04 对话页 <em>pages/dialogue + components/narrator</em></h2>
+    <p>最挤的一屏。站名/地图按钮/进度/语音/AI 状态/消息/预设/输入框共 8 层，靠 ink 台阶分成四个区。</p>
+    <div class="phone">
+      <div class="viewport" style="padding:0;display:flex;flex-direction:column">
+        <div style="padding:0 var(--s-4)">
+          <div class="top">
+            <div class="grow">
+              <div class="kicker">第 3 / 5 站</div>
+              <div class="title" style="font-size:20px;margin-top:4px">天堂</div>
+            </div>
+            <div class="btn ghost sm">游历地图</div>
+          </div>
+          <div class="step-rail" style="padding:4px 0 10px">
+            <span class="st done"><b>1</b></span><span class="bar"></span>
+            <span class="st done"><b>2</b></span><span class="bar"></span>
+            <span class="st now"><b>3</b></span><span class="bar"></span>
+            <span class="st"><b>4</b></span><span class="bar"></span>
+            <span class="st"><b>5</b></span>
+          </div>
+          <div class="narrator">
+            <div class="watermark" style="left:0;top:0;width:70%;height:100%">
+              <img src="../assets/palace-2.webp" style="width:100%;height:100%;object-fit:contain">
+            </div>
+            <img class="p" src="../assets/empress.webp" alt="">
+            <div class="v">
+              <div class="kicker">女皇 · 语音讲解</div>
+              <div class="row" style="margin-top:8px">
+                <div class="btn ghost sm">聆听此站</div>
+                <span class="chip">AI 文字对话</span>
+              </div>
+              <div class="muted" style="margin-top:6px">00:12 / 00:48 · 口型随音轨</div>
+            </div>
+          </div>
+          <div class="mark" style="top:186px;right:6px">7</div>
+        </div>
+        <div class="msgs" style="padding:var(--s-3) var(--s-4)">
+          <div class="msg"><div class="who">武则天</div>
+            <div class="bubble">抬头看，这是天堂。朕在洛阳的这处内道场是楼阁式建筑，里面曾供奉一尊巨大的夹纻佛像。</div></div>
+          <div class="msg me"><div class="who">你</div>
+            <div class="bubble">夹纻佛像是什么做法？</div></div>
+          <div class="msg"><div class="who">武则天</div>
+            <div class="bubble">［回复占位］</div></div>
+          <div class="muted" style="text-align:center">女皇正在思索…</div>
+        </div>
+        <div class="controls">
+          <div class="row">
+            <div class="btn ghost sm">此站故事</div><div class="btn ghost sm">问传说</div>
+            <div class="btn primary sm">前往下一站</div>
+          </div>
+          <div class="composer">
+            <div class="field">想问朕些什么？</div>
+            <div class="btn ghost sm" style="height:44px;padding:0 16px">发送</div>
+          </div>
+        </div>
+        <div class="mark" style="bottom:132px;left:6px">8</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 05 map ============ -->
+  <div class="unit">
+    <h2>05 游历地图 <em>pages/map</em></h2>
+    <p>现在 5 个元素纵向平铺、彼此无关联。改为主操作贴底常驻，点位清单折叠成可扫读列表。</p>
+    <div class="phone">
+      <div class="status">9:41</div><div class="navbar">武则天带你游洛阳</div>
+      <div class="viewport" style="display:flex;flex-direction:column;padding-bottom:0">
+        <div class="watermark" style="top:-6px;left:0;width:100%;height:100px">
+          <img src="../assets/palace-4.webp" style="width:100%;height:100%;object-fit:contain">
+        </div>
+        <div style="height:var(--s-5)"></div>
+        <div class="kicker">神都 · 点位</div>
+        <div class="title" style="font-size:24px;margin:4px 0 10px">游历地图</div>
+        <div class="ph" style="height:210px;flex:0 0 auto">[微信 &lt;map&gt; 组件]<br>现在是 56vh，建议降到 40vh<br>markers / include-points 保持现状</div>
+        <div class="card" style="margin-top:var(--s-3)">
+          <div class="row"><div class="section">本次景点</div><span class="chip">5 站</span></div>
+          <div style="margin-top:6px">
+            <div class="list-row"><span class="num">1</span>应天门<span style="margin-left:auto;color:var(--gold-300);font-size:11px">已到</span></div>
+            <div class="list-row"><span class="num">2</span>明堂<span style="margin-left:auto;color:var(--gold-300);font-size:11px">已到</span></div>
+            <div class="list-row"><span class="num">3</span>天堂<span style="margin-left:auto;color:var(--gold-500);font-size:11px">当前</span></div>
+            <div class="list-row" style="border-bottom:0"><div class="btn text">展开其余 2 站 ›</div></div>
+          </div>
+        </div>
+        <div class="mark" style="top:330px;left:6px">9</div>
+        <div class="v0note">定位未授权 / 地图加载失败不常驻在本屏，改由底部面板内联切换 —— 见 07 组件规范的 STATE 模板。</div>
+        <div style="flex:1"></div>
+        <div class="card raised" style="margin-bottom:var(--s-4)">
+          <div class="row" style="margin-bottom:10px">
+            <div><div class="kicker">第 3 站</div><div class="section" style="margin-top:4px">天堂</div></div>
+            <div class="btn ghost sm">打开听卷</div>
+          </div>
+          <div class="row"><div class="btn primary sm" style="flex:1">我的位置</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 06 story ============ -->
+  <div class="unit">
+    <h2>06 听卷 <em>pages/story</em></h2>
+    <p>现在只有 hero 图 + 两张同构卡片，缺阅读节奏。加来源脚注与讲解/传说的区分标记。</p>
+    <div class="phone">
+      <div class="status">9:41</div><div class="navbar">武则天带你游洛阳</div>
+      <div class="viewport">
+        <div class="kicker" style="margin-top:var(--s-3)">神都 · 听卷</div>
+        <div class="title" style="font-size:26px;margin:6px 0 12px">龙门石窟奉先寺</div>
+        <img class="hero" src="../assets/palace-5.webp" alt="">
+        <div class="narrator">
+          <img class="p" src="../assets/empress.webp" alt="" style="width:66px;height:92px;flex:0 0 66px">
+          <div class="v"><div class="kicker">女皇 · 语音讲解</div>
+            <div class="btn ghost sm" style="margin-top:8px">暂停讲解</div></div>
+        </div>
+        <div class="card" style="margin-top:var(--s-3)">
+          <div class="row"><div class="section">此站讲解</div><span class="chip">底稿</span></div>
+          <div class="body" style="margin-top:10px">随朕到伊水边看奉先寺。像龛记记下朕为皇后时，曾出脂粉钱两万贯助造……</div>
+          <div class="rule"></div>
+          <div class="muted">来源：［真实出处链接］</div>
+        </div>
+        <div class="card featured" style="margin-top:var(--s-3)">
+          <div class="row"><div class="section">传说</div><span class="chip"><span class="dot" style="background:var(--peony-500)"></span>非正史</span></div>
+          <div class="body" style="margin-top:10px;color:var(--text-mid)">民间传说卢舍那大佛依朕的面容雕成……</div>
+        </div>
+        <div class="mark" style="top:300px;right:6px">10</div>
+        <div style="height:var(--s-6)"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 07 组件规范 ============ -->
+  <div class="unit">
+    <h2>07 组件规范 <em>components/empress · narrator · 原子件</em></h2>
+    <p>立绘与语音条是跨页复用的两个组件，状态在这里定齐，各页不再各写各的。</p>
+    <div style="min-height:844px;border:1px solid var(--line-1);border-radius:26px;background:var(--ink-0);padding:var(--s-4)">
+      <div class="spec">
+        <b>EMPRESS 立绘</b>
+        <div class="grid">
+          <figure><img src="../assets/empress.webp"><figcaption>全身 · 静息</figcaption></figure>
+          <figure><img src="../assets/empress.webp"><figcaption>近景 · 口型开</figcaption></figure>
+          <figure><img src="../assets/empress.webp"><figcaption>加载失败 · 静态回退</figcaption></figure>
+        </div>
+        <div class="muted" style="margin-top:10px">Canvas 变形动效不动，仅统一尺寸 token：全身 216×350rpx，近景 206×230rpx。</div>
+      </div>
+      <div class="spec" style="margin-top:12px">
+        <b>NARRATOR 语音条</b>
+        <div class="narrator"><img class="p" src="../assets/empress.webp" style="width:60px;height:84px;flex:0 0 60px">
+          <div class="v"><div class="kicker">女皇 · 语音讲解</div><div class="btn ghost sm" style="margin-top:6px">聆听此站</div></div></div>
+        <div class="narrator" style="margin-top:8px"><img class="p" src="../assets/empress.webp" style="width:60px;height:84px;flex:0 0 60px">
+          <div class="v"><div class="kicker">播放中 · 口型随音轨</div><div class="btn ghost sm" style="margin-top:6px">暂停讲解</div></div></div>
+        <div class="narrator" style="margin-top:8px"><img class="p" src="../assets/empress.webp" style="width:60px;height:84px;flex:0 0 60px">
+          <div class="v"><div class="kicker">讲解暂不可用</div><div class="notice" style="margin-top:6px">点此重试本段音频</div></div></div>
+      </div>
+      <div class="spec" style="margin-top:12px">
+        <b>BUTTON 五态</b>
+        <div class="grid">
+          <div class="btn primary sm">primary</div><div class="btn primary sm pressed">按压</div>
+          <div class="btn ghost sm">ghost</div><div class="btn off sm" style="padding:0 12px;height:34px;font-size:12px">禁用</div>
+          <div class="btn ghost sm">⟳ 加载中</div>
+        </div>
+      </div>
+      <div class="spec" style="margin-top:12px">
+        <b>STATE 模板（空 / 错 / 授权）</b>
+        <div class="card" style="background:var(--ink-0);margin-top:0">
+          <div class="row"><div class="section">还没选定景点</div><span class="chip">空</span></div>
+          <div class="muted" style="margin-top:6px">［一句引导文案］</div>
+          <div class="btn ghost sm" style="margin-top:10px;width:max-content">返回游历选择</div>
+        </div>
+        <div class="card" style="background:var(--ink-0);margin-top:8px;border-color:rgba(235,169,175,.32)">
+          <div class="row"><div class="section" style="color:var(--alert)">定位未授权</div><span class="chip" style="border-color:rgba(235,169,175,.32);color:var(--alert)">授权</span></div>
+          <div class="muted" style="margin-top:6px">［一句说明：不授权也可以看景点，只是不显示你的位置。］</div>
+          <div class="row" style="margin-top:10px;gap:8px">
+            <div class="btn ghost sm">打开定位设置</div><div class="btn text">仍只看景点</div>
+          </div>
+        </div>
+        <div class="muted" style="margin-top:10px">alert 色全站只用于错误与重试；这三块共用同一个容器、同一套间距。</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="assumptions">
+  <h3>假设清单 · 需要你逐条确认或否决</h3>
+  <ol>
+    <li><b>底色统一为 #0A1A1D</b>，intro 原来的 #091719 并入。两色本无区别，只是漂移。</li>
+    <li><b>花瓣保留但降到 6 片</b>，牡丹粉只出现在花瓣和「你」的气泡上，不再用于其它任何地方。</li>
+    <li><b>邀请文案从 2.27s 延迟出场改为可跳过</b>。现在若素材加载慢，只有右下角一个 secondary 按钮兜底，路径太隐蔽。</li>
+    <li><b>新增「折次」进度条</b>（壹/贰/叁）。这是新引入的视觉元素，不在原设计里；如果你认为三步流程已经够直白，可以砍掉。</li>
+    <li><b>「重选时长」从按钮降级为文字链接</b>，让主按钮「启程入神都」成为唯一强操作。</li>
+    <li><b>主按钮在 choose 底部常驻</b>，而不是跟在卡片流后面。代价是矮屏上会盖住景点网格最后一行。</li>
+    <li><b>语音条与 AI 状态合并进同一行</b>，对话页省出约 40px 给消息区。narrator 组件因此从「左图右按钮」变成「左图右两行」。</li>
+    <li><b>「前往下一站」从次级按钮升为 primary</b>，「此站故事/问传说」保持 ghost。推进旅程是这一页的主任务。</li>
+    <li><b>地图页把「我的位置」贴底常驻</b>，地图从 56vh 降到 40vh 腾出内容区，点位清单折叠成 3 行 + 展开；景点详情从独立卡片折进底部面板。这一屏改动最大。</li>
+    <li><b>传说卡用 featured 描边 + 「非正史」chip 区分</b>，替代现在的纯标题区分。来源链接从 data/tour.js 提到界面上显示。</li>
+    <li><b>［待你决定］choose 第二折下方约有 200px 空白</b>：7 个景点在两列网格里填不满一屏。我没有擅自补内容。可选：(a) 保持空白，靠留白撑住仪式感；(b) 加一条已选顺序的路线预览带（1→2→3），兼作二次确认；(c) 把网格改成单列长列表，用行高把空白吃掉。我倾向 (b)，但它会新增一个元素。</li>
+  </ol>
+</div>
+
+<p class="foot">v0 不含：完整文案、全部状态、动效实现、Tweaks 面板。确认方向与上面 10 条假设后，我再做完整构建 —— 包括动效分层、按压/加载/失败全状态、以及把这套 token 落地成 app.wxss 的版本。</p>
+
+</body>
+</html>

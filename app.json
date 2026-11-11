@@ -1,1 +1,12 @@
-{"pages":["pages/map/index","pages/story/index"],"window":{"navigationBarTitleText":"武则天带你游洛阳","navigationBarBackgroundColor":"#fff7e9","navigationBarTextStyle":"black","backgroundColor":"#fff7e9"}}
+{
+  "pages": ["pages/intro/index", "pages/choose/index", "pages/dialogue/index", "pages/map/index", "pages/story/index"],
+  "window": {
+    "navigationBarTitleText": "武则天带你游洛阳",
+    "navigationBarBackgroundColor": "#0b191c",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#0b191c",
+    "pageOrientation": "portrait"
+  },
+  "permission": { "scope.userLocation": { "desc": "用于在游历地图上显示您的当前位置" } },
+  "requiredPrivateInfos": ["getLocation"]
+}

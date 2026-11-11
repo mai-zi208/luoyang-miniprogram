@@ -1,0 +1,37 @@
+@import "../../app.wxss";
+.narrator {
+  position:relative;display:flex;flex-direction:column;gap:var(--s-2);
+  min-height:236rpx;padding:20rpx var(--s-3);
+  background:var(--ink-1);border:1px solid var(--line-1);border-radius:var(--r-md);
+  box-shadow:var(--hl);overflow:hidden;
+}
+.row-line { display:flex;align-items:center;gap:var(--s-3); }
+.portrait-wrap { position:relative;flex-shrink:0;width:148rpx;height:200rpx;z-index:2; }
+.portrait { width:100%;height:100%;position:relative; }
+.voice { flex:1;position:relative;z-index:2;min-width:0; }
+/* 播放/暂停压在立绘下缘：卡内视线先落到女皇，再落到她的手势键。 */
+.voice-button {
+  position:absolute;left:50%;bottom:6rpx;transform:translateX(-50%);margin:0;
+  width:max-content;height:52rpx;line-height:50rpx;padding:0 22rpx;
+  font-size:20rpx;letter-spacing:2rpx;color:var(--gold-100);
+  background:var(--ink-0);border:1px solid var(--gold-500);border-radius:999rpx;
+}
+.voice-button.on { background:var(--gold-500);color:var(--on-gold); }
+.script {
+  position:relative;z-index:2;display:block;white-space:pre-wrap;word-break:break-word;
+  line-height:1.9;font-size:var(--f-body);color:var(--text-mid);
+  border-top:1px solid var(--line-1);padding-top:var(--s-2);
+}
+
+.ink {
+  position:absolute;left:0;top:0;width:72%;height:100%;
+  opacity:.07;mix-blend-mode:lighten;pointer-events:none;
+}
+.meter { display:flex;align-items:center;gap:12rpx;margin-top:14rpx; }
+.meter .track { flex:1;height:4rpx;background:var(--line-1);border-radius:4rpx;overflow:hidden; }
+/* 进度按整秒采样，过渡要长于采样间隔才读作连续推进；短于 1s 会走一段停一下。 */
+.meter .fill { height:100%;width:0;background:var(--gold-500);transition:width var(--t-4) linear; }
+.meter .faint { flex:0 0 auto;letter-spacing:1rpx; }
+.mouth { display:flex;gap:4rpx;align-items:flex-end;height:24rpx;flex:0 0 auto; }
+/* 口型每 40ms 采样一次，过渡时长必须跟着采样率走；160ms 会让嘴型滞后半拍。 */
+.mouth text { display:block;width:4rpx;height:6rpx;background:var(--gold-500);border-radius:2rpx;transition:height var(--t-0) linear }

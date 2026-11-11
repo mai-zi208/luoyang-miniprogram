@@ -1,0 +1,48 @@
+<view class="screen choose {{opening ? 'departing' : ''}}">
+  <view class="home-back" hover-class="pressed" bindtap="backToIntro">‹</view>
+  <image class="backdrop" src="/assets/palace-1.webp" mode="aspectFit" />
+  <view class="welcome">
+    <empress class="portrait" greet="{{opening}}" />
+    <view class="welcome-copy">
+      <view class="kicker">武周 · 神都游历</view>
+      <view class="title lg">请与朕选定本次游历</view>
+      <view class="muted">{{stage === 'duration' ? '先择游历时长' : '依照想走的顺序勾选景点'}}</view>
+    </view>
+  </view>
+  <view class="step-rail">
+    <view class="st {{stage === 'duration' ? 'now' : 'done'}}" hover-class="pressed" data-stage="duration" bindtap="jumpStage"><text class="d">壹</text><text class="lb">时长</text></view>
+    <view class="bar"></view>
+    <view class="st {{opening ? 'done' : (stage === 'stops' ? 'now' : '')}}" hover-class="pressed" data-stage="stops" bindtap="jumpStage"><text class="d">贰</text><text class="lb">景点</text></view>
+    <view class="bar"></view>
+    <view class="st {{opening ? 'now' : ''}}" hover-class="pressed" data-stage="start" bindtap="jumpStage"><text class="d">叁</text><text class="lb">启程</text></view>
+  </view>
+  <view wx:if="{{stage === 'duration'}}" class="card stage {{turning ? 'turning' : ''}}">
+    <view class="row">
+      <view class="kicker">第一折</view>
+      <view wx:if="{{saved}}" class="chip"><view class="dot"></view>续上次游历</view>
+    </view>
+    <view class="heading">游历时长</view>
+    <view class="durations">
+      <button wx:for="{{durations}}" wx:key="count" class="choice dur {{count === item.count ? 'picked' : ''}}" hover-class="pressed" disabled="{{turning}}" data-count="{{item.count}}" bindtap="chooseDuration">
+        <view class="dur-title">{{item.title}}</view><view class="muted">{{item.count}} 个景点</view>
+      </button>
+    </view>
+  </view>
+  <view wx:else class="card stage {{turning ? 'turning' : ''}}">
+    <view class="row"><view class="kicker">第二折 · {{count}} 站</view><button class="text-btn back" hover-class="pressed" disabled="{{opening || turning}}" bindtap="editDuration">重选时长</button></view>
+    <view class="row head"><view class="heading">景点勾选</view><view class="counter">已选 <text>{{picked}}</text> / {{count}}</view></view>
+    <view class="places">
+      <button wx:for="{{choices}}" wx:key="id" class="choice place {{item.order ? 'picked' : ''}}" style="animation-delay:{{index * 45}}ms" hover-class="pressed" disabled="{{opening || turning}}" data-id="{{item.id}}" bindtap="toggleStop">
+        <text class="badge">{{item.order || '＋'}}</text><text class="place-name">{{item.name}}</text>
+      </button>
+    </view>
+    <view class="rule"></view>
+    <view class="route" wx:if="{{route.length}}">
+      <view wx:for="{{route}}" wx:for-item="s" wx:for-index="i" wx:key="id" class="node"><text class="num">{{i + 1}}</text>{{s.name}}</view>
+    </view>
+    <view class="route empty muted" wx:else>尚未勾选，朕先候着。</view>
+  </view>
+  <view class="notice" wx:if="{{notice}}">{{notice}}</view>
+  <button wx:if="{{stage === 'stops'}}" class="primary start" hover-class="pressed" disabled="{{ids.length !== count || opening || turning}}" bindtap="startTour">启程入神都</button>
+  <view wx:if="{{opening}}" class="sweep"></view>
+</view>
