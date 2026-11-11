@@ -24,8 +24,4 @@ function writeRecord(patch) {
   }
 }
 
-<<<<<<< HEAD
 module.exports = { readRecord, writeRecord, failureMessage }
-=======
-module.exports = { readRecord, writeRecord, failureMessage }
->>>>>>> 1c9c4a81d314fc3aac96ca980cebb777b4f6b246
